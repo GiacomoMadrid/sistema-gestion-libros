@@ -1,13 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package conexion;
 
 /**
  *
  * @author Giacomo
  */
-public class GlobalException {
+public class GlobalException extends java.lang.Exception{
+    public GlobalException (){
+    
+    }
+    
+    public GlobalException (String mensaje){
+        super(mensaje);
+    }
     
 }
