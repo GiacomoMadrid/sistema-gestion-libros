@@ -57,8 +57,8 @@ public class Autor {
         this.fecha_nacimiento = fecha_nacimiento;
     }
 
-    public Pais getPais() {
-        return pais;
+    public String getPais() {
+        return pais.getNombre();
     }
 
     public void setPais(Pais pais) {
