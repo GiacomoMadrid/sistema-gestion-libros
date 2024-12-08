@@ -29,6 +29,12 @@ public class ControladorPrincipal {
         this.contEditorial = new ControladorEditorial(vistaE);
         //this.contAutor = new ControladorAutor(vistaA);
         
+        this.vista.bgBuscar.add(this.vista.radNombre);
+        this.vista.bgBuscar.add(this.vista.radAutor);
+        this.vista.bgBuscar.add(this.vista.radEditorial);
+        this.vista.bgBuscar.add(this.vista.radPais);
+        this.vista.bgBuscar.add(this.vista.radDisponible);
+        
         this.vista.btnVerPaises.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,7 +51,7 @@ public class ControladorPrincipal {
     
     }
     
-    
+    //*************************************************************************
     public void iniciar(){
         this.vista.setLocationRelativeTo(null);
         this.vista.setVisible(true);

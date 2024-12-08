@@ -20,10 +20,39 @@ public class Autor {
         this.apellidos = apellidos;
         this.fecha_nacimiento = fecha_nacimiento;
         this.pais = pais;
-        this.nombre_completo = nombres + " " + apellidos;
-        
-        
+        this.nombre_completo = nombres + " " + apellidos;               
     }
+    
+    public Autor(int id, String nombres, String apellidos, Pais pais){
+        this.id= id;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.fecha_nacimiento = null;
+        this.pais = pais;
+        this.nombre_completo = nombres + " " + apellidos;               
+    }
+    
+    public Autor(String nombres, String apellidos, Pais pais){
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.fecha_nacimiento = null;
+        this.pais = pais;
+        this.nombre_completo = nombres + " " + apellidos;               
+    }
+    
+    public Autor(String nombres, String apellidos, Date fecha_nacimiento, Pais pais){       
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.fecha_nacimiento = fecha_nacimiento;
+        this.pais = pais;
+        this.nombre_completo = nombres + " " + apellidos;               
+    }
+    
+    public Autor(int id){
+        this.id= id;             
+    }
+    
+    //----------------------------------------------------------------------------
 
     public int getId() {
         return id;
