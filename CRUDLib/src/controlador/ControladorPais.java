@@ -29,7 +29,7 @@ public class ControladorPais {
         DefaultTableModel model = new DefaultTableModel();
         PaisDAO paisDao = new PaisDAO();
                 
-        model.addColumn("#");
+        model.addColumn("ID");
         model.addColumn("Nombre");
         
         Collection<Pais> paises = paisDao.mostrar_paises();
@@ -37,6 +37,11 @@ public class ControladorPais {
             model.addRow(new Object[]{p.getId(), p.getNombre()});        
         }
         this.vista.tabPais.setModel(model);
+        
+        this.vista.tabPais.getColumnModel().getColumn(0).setPreferredWidth(40);
+        this.vista.tabPais.getColumnModel().getColumn(0).setMinWidth(40);
+        this.vista.tabPais.getColumnModel().getColumn(0).setMaxWidth(40);
+        this.vista.tabPais.getColumnModel().getColumn(0).setWidth(40);
         
     }catch(GlobalException | NoDataException ex){
         JOptionPane.showMessageDialog(vista, "Error al cargar los países: " + ex.getMessage());
