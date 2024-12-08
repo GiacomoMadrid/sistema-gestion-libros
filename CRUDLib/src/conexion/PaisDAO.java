@@ -12,7 +12,7 @@ import oracle.jdbc.OracleTypes;
  * @author Giacomo
  */
 public class PaisDAO extends Conexion{
-    private static final String MOSTRAR_PAISES ="?=call mostrar_paises()" ;
+    private static final String MOSTRAR_PAISES ="{? = call mostrar_paises()}" ;
     
     public Collection mostrar_paises() throws GlobalException, NoDataException {
         try{
