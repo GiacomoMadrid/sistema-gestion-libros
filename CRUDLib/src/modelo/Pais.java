@@ -1,21 +1,13 @@
 package modelo;
 
-import conexion.GlobalException;
-import conexion.NoDataException;
-import conexion.PaisDAO;
-import java.sql.SQLException;
-import crudlib.CRUDLib;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Giacomo
  */
 public class Pais {
-    int id;
-    String nombre;
+    private int id;
+    private String nombre;
     
     public Pais(){
     }

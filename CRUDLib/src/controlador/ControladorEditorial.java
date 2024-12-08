@@ -17,8 +17,8 @@ import modelo.Editorial;
  * @author Giacomo
  */
 public class ControladorEditorial {
-    frmEditorial vista;
-    EditorialDAO edDao;
+    protected frmEditorial vista;
+    private EditorialDAO edDao;
     
     public ControladorEditorial(frmEditorial v) throws SQLException{
         this.vista = v;

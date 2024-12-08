@@ -7,12 +7,12 @@ import java.util.Date;
  * @author Giacomo
  */
 public class Autor {
-    int id;
-    String nombres;
-    String apellidos;
-    Integer anno_nacimiento;
-    Pais pais;
-    String nombre_completo;
+    private int id;
+    private String nombres;
+    private String apellidos;
+    private Integer anno_nacimiento;
+    private Pais pais;
+    private String nombre_completo;
     
     public Autor(int id, String nombres, String apellidos, int anno_nacimiento, Pais pais){
         this.id= id;
@@ -99,7 +99,7 @@ public class Autor {
     }
     
     public String getNombre_completo() {
-        return nombre_completo;
+        return nombres + " " + apellidos;
     }
 
 }

@@ -18,8 +18,8 @@ import modelo.Pais;
  * @author Giacomo
  */
 public class ControladorPais {
-    frmPais vista;
-    PaisDAO pDao;
+    protected frmPais vista;
+    private PaisDAO pDao;
     
     public ControladorPais(frmPais v) throws SQLException{
         this.vista = v;

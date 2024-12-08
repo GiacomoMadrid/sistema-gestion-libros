@@ -5,8 +5,8 @@ package modelo;
  * @author Giacomo
  */
 public class Editorial {
-    int id;
-    String nombre;
+    private int id;
+    private String nombre;
     
     public Editorial(int id, String nombre){
         this.id = id;

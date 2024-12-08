@@ -7,13 +7,38 @@ import java.util.Date;
  * @author Giacomo
  */
 public class Ejemplar {
-    int id;
-    String titulo;
-    Autor autor;
-    Editorial editorial;
-    boolean disponible;
-   Integer anno_publicacion;
-
+    private int id;
+    private String titulo;
+    private Autor autor;
+    private Editorial editorial;
+    private int disponible;
+    private Integer anno_publicacion;
+    
+    public Ejemplar(int id, Autor a, Editorial e, String t, int d, int an){
+        this.id = id;
+        this.titulo = t;
+        this.autor = a;
+        this.editorial = e;
+        this.disponible = d;
+        this.anno_publicacion = an;
+    }
+    
+    public Ejemplar(){
+    }
+    
+    public Ejemplar(int id){
+        this.id = id;
+    }
+    
+    public Ejemplar(Autor a, Editorial e, String t,  int d, int an){
+        this.titulo = t;
+        this.autor = a;
+        this.editorial = e;
+        this.disponible = d;
+        this.anno_publicacion = an;
+    }
+    
+    //--------------------------------------------------------------------------
     public int getId() {
         return id;
     }
@@ -46,11 +71,11 @@ public class Ejemplar {
         this.editorial = editorial;
     }
 
-    public boolean isDisponible() {
+    public int isDisponible() {
         return disponible;
     }
 
-    public void setDisponible(boolean disponible) {
+    public void setDisponible(int disponible) {
         this.disponible = disponible;
     }
 
@@ -61,7 +86,21 @@ public class Ejemplar {
     public void setAnno_publicacion(int anno_publicacion) {
         this.anno_publicacion = anno_publicacion;
     }
-           
     
+    public String getNombreAutor(){
+        return this.autor.getNombre_completo();
+    }
+    
+    public String getNombreEditorial(){
+        return this.editorial.getNombre();
+    }
+    
+    public String getDisponibilidad(){
+        if(this.disponible == 1){
+            return "Sí";
+        }else{
+            return "No";
+        }
+    }
     
 }

@@ -1,24 +1,32 @@
 package conexion;
 
+import conexion.GlobalException;
+import conexion.NoDataException;
 import java.util.Collection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import modelo.Autor;
 import modelo.Editorial;
+import modelo.Ejemplar;
+import modelo.Pais;
 import oracle.jdbc.OracleTypes;
 /**
  *
  * @author Giacomo
  */
-public class EditorialDAO extends Conexion implements I_Conexiones{
-    private static final String MOSTRAR_EDITORIALES ="{? = call mostrar_editoriales()}" ;
-    private static final String CREAR_EDITORIALES = "{call registrar_editorial(?)}";
-    private static final String ELIMINAR_EDITORIALES = "{call eliminar_editorial(?)}";
-    private static final String ACTUALIZAR_EDITORIALES = "{call actualizar_editorial(?,?)}";
-    private static final String ENCONTRAR_UNA_EDITORIAL = "{? = call buscar_editorial(?)}";
+public class EjemplarDAO extends Conexion implements I_Conexiones{
+    private static final String MOSTRAR_EJEMPLARES ="{? = call mostrar_todo()}" ;
+    private static final String CREAR_EJEMPLARES = "{call registrar_ejemplar(?,?,?,?)}";
+    private static final String ELIMINAR_EJEMPLARES = "{call eliminar_ejemplar(?)}";
+    private static final String ACTUALIZAR_EJEMPLARES = "{call actualizar_ejemplar(?,?,?,?,?,?)}";
+    private static final String ENCONTRAR_UN_EJEMPLAR ="{? = call buscar_ejemplar(?)}" ;
     
+    private PaisDAO pDao = new PaisDAO();
+    private EditorialDAO eDao = new EditorialDAO();
+    private AutorDAO aDao = new AutorDAO();
     
     @Override
     public Collection mostrar_todo() throws GlobalException, NoDataException {
@@ -34,19 +42,31 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         
         ResultSet rs = null;
         ArrayList lista = new ArrayList();
-        Editorial editorialObj = null;
+        Ejemplar ejm = null;
         CallableStatement pstmt =null; 
         
         try{
-            pstmt = conexion.prepareCall(MOSTRAR_EDITORIALES);
+            pstmt = conexion.prepareCall(MOSTRAR_EJEMPLARES);
             pstmt.registerOutParameter(1, OracleTypes.CURSOR);
             pstmt.execute();
             
             rs = (ResultSet)pstmt.getObject(1);
             
             while(rs.next()){
-               editorialObj = new Editorial(rs.getInt("id"), rs.getString("nombre"));
-               lista.add(editorialObj);
+                int autorId = rs.getInt("autor");                
+                int edId = rs.getInt("editorial");
+                Autor autor = (Autor) aDao.buscar(new Autor(autorId)); 
+                Editorial editorial = (Editorial) eDao.buscar(new Editorial(edId)); 
+                
+                ejm = new Ejemplar(
+                        rs.getInt("id"), 
+                        autor,
+                        editorial,
+                        rs.getString("titulo"), 
+                        rs.getInt("disponible"), 
+                        rs.getInt("anno_publicacion")
+                );
+                lista.add(ejm);                
             }
             
         }catch(SQLException ex){
@@ -55,11 +75,11 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         
         }finally{
             try{
-                if(rs == null){
+                if(rs != null){
                     rs.close();
                 }
                 
-                if(pstmt == null){
+                if(pstmt != null){
                     pstmt.close();
                 }
                 
@@ -68,15 +88,12 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
             }catch(SQLException se){
                 throw new GlobalException("Estatutos no válidos");
             
-            }
-        
+            }        
         }
-        
-        
+                
         if(lista == null || lista.size() == 0){
             throw new NoDataException("No hay datos");
-        }
-        
+        }        
         return lista;        
     }
 
@@ -93,11 +110,14 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         }
         
         CallableStatement pstmt =null;
-        Editorial ed = (Editorial) obj; 
+        Autor a = (Autor) obj; 
         
         try{
-            pstmt = conexion.prepareCall(CREAR_EDITORIALES);
-            pstmt.setString(1, ed.getNombre());
+            pstmt = conexion.prepareCall(CREAR_EJEMPLARES);
+            pstmt.setString(1, a.getNombres());
+            pstmt.setString(2, a.getApellidos());  
+            pstmt.setInt(3, a.getPais().getId());  
+            pstmt.setInt(4, a.getAnno_nacimiento());
             boolean resultado  = pstmt.execute();
             
             if(resultado){
@@ -135,11 +155,11 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         }
         
         PreparedStatement pstmt = null;
-        Editorial ed = (Editorial) obj; 
+        Autor a = (Autor) obj; 
         
         try{
-            pstmt = conexion.prepareCall(ELIMINAR_EDITORIALES);
-            pstmt.setInt(1, ed.getId());
+            pstmt = conexion.prepareCall(ELIMINAR_EJEMPLARES);
+            pstmt.setInt(1, a.getId());
             int resultado = pstmt.executeUpdate();
             
             if(resultado == 0){
@@ -178,12 +198,15 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         }
         
         PreparedStatement pstmt = null;
-        Editorial ed = (Editorial) obj; 
+        Autor a = (Autor) obj; 
         
         try{
-            pstmt = conexion.prepareCall(ACTUALIZAR_EDITORIALES);
-            pstmt.setInt(1, ed.getId());
-            pstmt.setString(2, ed.getNombre());
+            pstmt = conexion.prepareCall(ACTUALIZAR_EJEMPLARES);
+            pstmt.setInt(1, a.getId()); 
+            pstmt.setString(2, a.getNombres());  
+            pstmt.setString(3, a.getApellidos());    
+            pstmt.setInt(4, a.getPais().getId()); 
+            pstmt.setInt(5, a.getAnno_nacimiento());
             
             int resultado = pstmt.executeUpdate();
             
@@ -207,7 +230,7 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         
     
     }
-
+    
     @Override
     public Object buscar(Object obj) throws GlobalException, NoDataException {
         try {
@@ -219,18 +242,26 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         }
 
         ResultSet rs = null;
-        Editorial eObj = (Editorial) obj;
+        Autor autorObj = (Autor) obj;
         CallableStatement pstmt = null;
 
         try {
-            pstmt = conexion.prepareCall(ENCONTRAR_UNA_EDITORIAL);
+            pstmt = conexion.prepareCall(ENCONTRAR_UN_EJEMPLAR);
             pstmt.registerOutParameter(1, OracleTypes.CURSOR);
-            pstmt.setInt(2, eObj.getId());
-            pstmt.execute();            
-            rs = (ResultSet)pstmt.getObject(1);
-            
-            while(rs.next()){
-                eObj = new Editorial(rs.getInt("id"), rs.getString("nombre"));
+            pstmt.setInt(2, autorObj.getId());
+            pstmt.execute();
+
+            rs = (ResultSet) pstmt.getObject(1);
+
+            while (rs.next()) {
+                autorObj.setId(rs.getInt("id"));
+                autorObj.setNombres(rs.getString("nombres"));
+                autorObj.setApellidos(rs.getString("apellidos"));
+                autorObj.setAnno_nacimiento(rs.getInt("anno_nacimiento"));
+                
+                //int idPais = rs.getInt("pais");
+                //Pais pais = (Pais) pDao.buscar(new Pais(idPais));
+                //autorObj.setPais(pais);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -245,15 +276,13 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
                 }
                 desconectar();
             } catch (SQLException se) {
-                se.printStackTrace();
                 throw new GlobalException("Estatutos no válidos");
             }
         }
-        return eObj;
-    
-    
-    }
-    
+
+        return autorObj;
+    }                
+        
     
     
 }
