@@ -1,8 +1,7 @@
 package controlador;
 import conexion.GlobalException;
 import conexion.NoDataException;
-import conexion.PaisDAO;
-import crudlib.CRUDLib;
+import conexion.EditorialDAO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -11,19 +10,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import vista.frmPais;
-import modelo.Pais;
+import vista.frmEditorial;
+import modelo.Editorial;
 /**
  *
  * @author Giacomo
  */
-public class ControladorPais {
-    frmPais vista;
-    PaisDAO pDao;
+public class ControladorEditorial {
+    frmEditorial vista;
+    EditorialDAO edDao;
     
-    public ControladorPais(frmPais v) throws SQLException{
+    public ControladorEditorial(frmEditorial v) throws SQLException{
         this.vista = v;
-        this.pDao = new PaisDAO();
+        this.edDao = new EditorialDAO();
         
         //---------------------------------------------------------------------
         
@@ -31,11 +30,11 @@ public class ControladorPais {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    crearPais();
+                    crearEditorial();
                 } catch (GlobalException ex) {
-                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ControladorEditorial.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NoDataException ex) {
-                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ControladorEditorial.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -44,11 +43,11 @@ public class ControladorPais {
             @Override
             public void actionPerformed(ActionEvent e){
                 try {
-                    eliminarPais();
+                    eliminarEditorial();
                 } catch (GlobalException ex) {
-                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ControladorEditorial.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NoDataException ex) {
-                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ControladorEditorial.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -57,11 +56,11 @@ public class ControladorPais {
             @Override
             public void actionPerformed(ActionEvent e){
                 try {
-                    actualizarPais();
+                    actualizarEditorial();
                 } catch (GlobalException ex) {
-                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ControladorEditorial.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NoDataException ex) {
-                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ControladorEditorial.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -72,17 +71,17 @@ public class ControladorPais {
     }
     
     //*****************************************************************************
-    public void mostrarPaises(){
+    public void mostrarEditoriales(){
         try{
             DefaultTableModel model = new DefaultTableModel();
-            PaisDAO paisDao = new PaisDAO();
+            EditorialDAO ediDao = new EditorialDAO();
 
             model.addColumn("ID");
             model.addColumn("Nombre");
 
-            Collection<Pais> paises = paisDao.mostrar_todo();
-            for(Pais p : paises){
-                model.addRow(new Object[]{p.getId(), p.getNombre()});        
+            Collection<Editorial> editoriales = ediDao.mostrar_todo();
+            for(Editorial ed : editoriales){
+                model.addRow(new Object[]{ed.getId(), ed.getNombre()});        
             }
             this.vista.tabPais.setModel(model);
 
@@ -92,57 +91,57 @@ public class ControladorPais {
             this.vista.tabPais.getColumnModel().getColumn(0).setWidth(40);
 
         }catch(GlobalException | NoDataException ex){
-            JOptionPane.showMessageDialog(vista, "Error al cargar los países: " + ex.getMessage());
+            JOptionPane.showMessageDialog(vista, "Error al cargar los editoriales: " + ex.getMessage());
         }
     }
     
-    public void crearPais() throws GlobalException, NoDataException{
-        String str = JOptionPane.showInputDialog("Nombre del nuevo país: ");
+    public void crearEditorial() throws GlobalException, NoDataException{
+        String str = JOptionPane.showInputDialog("Nombre de la nueva editorial: ");
         if(str != null && str != ""){
-            Pais p = new Pais(str);
-            pDao.crear(p);
-            mostrarPaises();
+            Editorial ed = new Editorial(str);
+            edDao.crear(ed);
+            mostrarEditoriales();
             
         }else{
-            JOptionPane.showMessageDialog(null, "No se agregó el país.");
+            JOptionPane.showMessageDialog(null, "No se agregó la editorial.");
         }        
     }
     
-    public void eliminarPais() throws GlobalException, NoDataException{
-        String str = JOptionPane.showInputDialog("Id del país a eliminar: ");
+    public void eliminarEditorial() throws GlobalException, NoDataException{
+        String str = JOptionPane.showInputDialog("Id de la editorial a eliminar: ");
         if(str != null && str != ""){
             try {
                 int id = Integer.parseInt(str);
-                Pais p = new Pais(id);
-                pDao.eliminar(p);
-                mostrarPaises();
+                Editorial ed = new Editorial(id);
+                edDao.eliminar(ed);
+                mostrarEditoriales();
                 
             }catch(NumberFormatException e){
-                JOptionPane.showMessageDialog(null, "ID Inválido\nNo se eliminó ningún país.");    
+                JOptionPane.showMessageDialog(null, "ID Inválido\nNo se eliminó ninguna editorial.");    
             }
             
         }else{
-            JOptionPane.showMessageDialog(null, "No se eliminó ningún país.");
+            JOptionPane.showMessageDialog(null, "No se eliminó ninguna editorial.");
         }    
     }
     
-    public void actualizarPais() throws GlobalException, NoDataException{
-        String str = JOptionPane.showInputDialog("Id del país a actualizar: ");
+    public void actualizarEditorial() throws GlobalException, NoDataException{
+        String str = JOptionPane.showInputDialog("Id de la editorial a actualizar: ");
         if(str != null && str != ""){
             try {
                 int id = Integer.parseInt(str);                
-                String nombre = JOptionPane.showInputDialog("Nuevo nombre para el pais: ");                
-                Pais p = new Pais(id, nombre);
+                String nombre = JOptionPane.showInputDialog("Nuevo nombre para la editorial: ");                
+                Editorial p = new Editorial(id, nombre);
                 
-                pDao.actualizar(p);
-                mostrarPaises();
+                edDao.actualizar(p);
+                mostrarEditoriales();
                 
             }catch(NumberFormatException e){
                 JOptionPane.showMessageDialog(null, "ID Invaálido.");    
             }
             
         }else{
-            JOptionPane.showMessageDialog(null, "No se actualizó ningún país.");
+            JOptionPane.showMessageDialog(null, "No se actualizó ninguna editorial.");
         }    
     }
     
@@ -151,7 +150,7 @@ public class ControladorPais {
     public void iniciar(){
         this.vista.setLocationRelativeTo(null);
         this.vista.setVisible(true);
-        mostrarPaises();        
+        mostrarEditoriales();        
         
     }
     

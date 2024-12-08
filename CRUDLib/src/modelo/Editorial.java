@@ -13,6 +13,14 @@ public class Editorial {
         this.nombre = nombre;
     }
 
+    public Editorial(int id){
+        this.id = id;
+    }
+    
+    public Editorial(String nombre){
+        this.nombre = nombre;
+    }
+    
     public int getId() {
         return id;
     }
