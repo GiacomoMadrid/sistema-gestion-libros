@@ -94,10 +94,15 @@ public class ControladorPais {
     public void eliminarPais() throws GlobalException, NoDataException{
         String str = JOptionPane.showInputDialog("Id del país a eliminar: ");
         if(str != null && str != ""){
-            int id = Integer.parseInt(str);
-            Pais p = new Pais(id);
-            pDao.eliminar(p);
-            mostrarPaises();
+            try {
+                int id = Integer.parseInt(str);
+                Pais p = new Pais(id);
+                pDao.eliminar(p);
+                mostrarPaises();
+                
+            }catch(NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "ID Invaálido\nNo se eliminó ningún país.");    
+            }
             
         }else{
             JOptionPane.showMessageDialog(null, "No se eliminó ningún país.");
