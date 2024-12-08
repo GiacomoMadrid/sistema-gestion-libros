@@ -32,7 +32,7 @@ public class ControladorPais {
         model.addColumn("ID");
         model.addColumn("Nombre");
         
-        Collection<Pais> paises = paisDao.mostrar_paises();
+        Collection<Pais> paises = paisDao.mostrar_todo();
         for(Pais p : paises){
             model.addRow(new Object[]{p.getId(), p.getNombre()});        
         }

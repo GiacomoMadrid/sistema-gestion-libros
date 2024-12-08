@@ -11,10 +11,11 @@ import oracle.jdbc.OracleTypes;
  *
  * @author Giacomo
  */
-public class PaisDAO extends Conexion{
+public class PaisDAO extends Conexion implements I_Conexiones{
     private static final String MOSTRAR_PAISES ="{? = call mostrar_paises()}" ;
     
-    public Collection mostrar_paises() throws GlobalException, NoDataException {
+    @Override
+    public Collection mostrar_todo() throws GlobalException, NoDataException {
         try{
             conectar();
         
@@ -70,7 +71,24 @@ public class PaisDAO extends Conexion{
             throw new NoDataException("No hay datos");
         }
         
-        return lista;
+        return lista;        
     }
+
+    @Override
+    public void crear(Object obj) throws GlobalException, NoDataException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void delete(Object obj) throws GlobalException, NoDataException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void update(Object obj) throws GlobalException, NoDataException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    
     
 }
