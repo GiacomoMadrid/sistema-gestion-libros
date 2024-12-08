@@ -52,6 +52,23 @@ public class ControladorPais {
                 }
             }
         });
+        
+        this.vista.btnActualizar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                try {
+                    actualizarPais();
+                } catch (GlobalException ex) {
+                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NoDataException ex) {
+                    Logger.getLogger(ControladorPais.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        
+        
+        
     }
     
     //*****************************************************************************
@@ -106,6 +123,26 @@ public class ControladorPais {
             
         }else{
             JOptionPane.showMessageDialog(null, "No se eliminó ningún país.");
+        }    
+    }
+    
+    public void actualizarPais() throws GlobalException, NoDataException{
+        String str = JOptionPane.showInputDialog("Id del país a actualizar: ");
+        if(str != null && str != ""){
+            try {
+                int id = Integer.parseInt(str);                
+                String nombre = JOptionPane.showInputDialog("Nuevo nombre para el pais: ");                
+                Pais p = new Pais(id, nombre);
+                
+                pDao.actualizar(p);
+                mostrarPaises();
+                
+            }catch(NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "ID Invaálido.");    
+            }
+            
+        }else{
+            JOptionPane.showMessageDialog(null, "No se actualizó ningún país.");
         }    
     }
     

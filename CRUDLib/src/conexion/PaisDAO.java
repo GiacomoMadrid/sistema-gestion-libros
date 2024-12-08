@@ -16,6 +16,7 @@ public class PaisDAO extends Conexion implements I_Conexiones{
     private static final String MOSTRAR_PAISES ="{? = call mostrar_paises()}" ;
     private static final String CREAR_PAIS = "{call registrar_pais(?)}";
     private static final String ELIMINAR_PAIS = "{call eliminar_pais(?)}";
+    private static final String ACTUALIZAR_PAIS = "{call actualizar_pais(?,?)}";
     
     
     @Override
@@ -165,7 +166,45 @@ public class PaisDAO extends Conexion implements I_Conexiones{
 
     @Override
     public void actualizar(Object obj) throws GlobalException, NoDataException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try{
+            conectar();
+        
+        }catch(ClassNotFoundException ex){
+            throw new GlobalException("No se ha localizado el driver"); 
+            
+        }catch(SQLException exe){
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+        
+        PreparedStatement pstmt = null;
+        Pais p = (Pais) obj; 
+        
+        try{
+            pstmt = conexion.prepareCall(ACTUALIZAR_PAIS);
+            pstmt.setInt(1, p.getId());
+            pstmt.setString(2, p.getNombre());
+            
+            int resultado = pstmt.executeUpdate();
+            
+            if(resultado == 0){
+                throw new NoDataException("No se realizó la actualización");
+            }
+                    
+        }catch(SQLException ex){
+            throw new GlobalException("Sentecia no válida");
+        
+        }finally{
+            try{
+                if(pstmt != null){
+                    pstmt.close();
+                }
+                desconectar();
+            }catch(SQLException ex){
+                throw new GlobalException("Estatutos inválidos");                
+            }
+        }
+        
+    
     }
     
     
