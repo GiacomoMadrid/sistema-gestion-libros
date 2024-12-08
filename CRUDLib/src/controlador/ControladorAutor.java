@@ -102,7 +102,7 @@ public class ControladorAutor {
         try{
             
             DefaultTableModel model = new DefaultTableModel();
-
+            
             model.addColumn("ID");
             model.addColumn("Nombres");
             model.addColumn("Apellidos");
@@ -111,8 +111,13 @@ public class ControladorAutor {
 
             Collection<Autor> autores = aDao.mostrar_todo();
             for(Autor a : autores){
-                model.addRow(new Object[]{a.getId(), a.getNombres(), 
-                    a.getApellidos(), a.getNombrePais(), a.getAnno_nacimiento()});        
+                if(a.getAnno_nacimiento() != null){
+                    model.addRow(new Object[]{a.getId(), a.getNombres(), 
+                        a.getApellidos(), a.getNombrePais(), a.getAnno_nacimiento()});
+                }else{
+                    model.addRow(new Object[]{a.getId(), a.getNombres(), 
+                        a.getApellidos(), a.getNombrePais(), "--"});
+                }       
             }
             this.vista.tabPais.setModel(model);
 
@@ -139,8 +144,7 @@ public class ControladorAutor {
         }catch(GlobalException | NoDataException | NumberFormatException ex){
             JOptionPane.showMessageDialog(vista, "Error al cargar el autor: " + ex.getMessage());
         }
-    
-    
+        
     }
     
     public void crearAutor() throws GlobalException, NoDataException{
@@ -151,7 +155,7 @@ public class ControladorAutor {
         Integer anno;
         
         if(strAnno.isBlank() || strAnno.isEmpty()){
-            anno = null;
+            anno = 0;
         }else{
             anno = Integer.parseInt(strAnno);
         }

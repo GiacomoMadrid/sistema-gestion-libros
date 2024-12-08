@@ -110,15 +110,15 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         }
         
         CallableStatement pstmt =null;
-        Autor a = (Autor) obj; 
+        Ejemplar ej = (Ejemplar) obj;
         
         try{
             pstmt = conexion.prepareCall(CREAR_EJEMPLARES);
-            pstmt.setString(1, a.getNombres());
-            pstmt.setString(2, a.getApellidos());  
-            pstmt.setInt(3, a.getPais().getId());  
-            pstmt.setInt(4, a.getAnno_nacimiento());
-            boolean resultado  = pstmt.execute();
+            pstmt.setInt(1, ej.getAutor().getId());
+            pstmt.setInt(2, ej.getEditorial().getId());  
+            pstmt.setString(3, ej.getTitulo());  
+            pstmt.setInt(4, ej.getAnno_publicacion());
+            boolean resultado = pstmt.execute();
             
             if(resultado){
                 throw new NoDataException("No se realizó la insersión");
@@ -155,7 +155,7 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         }
         
         PreparedStatement pstmt = null;
-        Autor a = (Autor) obj; 
+        Ejemplar a = (Ejemplar) obj; 
         
         try{
             pstmt = conexion.prepareCall(ELIMINAR_EJEMPLARES);
@@ -179,10 +179,7 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
                 throw new GlobalException("Estatutos inválidos");                
             }
         }
-        
-        
-    
-    
+            
     }
 
     @Override
@@ -198,15 +195,16 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         }
         
         PreparedStatement pstmt = null;
-        Autor a = (Autor) obj; 
+        Ejemplar a = (Ejemplar) obj; 
         
         try{
             pstmt = conexion.prepareCall(ACTUALIZAR_EJEMPLARES);
             pstmt.setInt(1, a.getId()); 
-            pstmt.setString(2, a.getNombres());  
-            pstmt.setString(3, a.getApellidos());    
-            pstmt.setInt(4, a.getPais().getId()); 
-            pstmt.setInt(5, a.getAnno_nacimiento());
+            pstmt.setInt(2, a.getAutor().getId());  
+            pstmt.setInt(3, a.getEditorial().getId());    
+            pstmt.setString(4, a.getTitulo()); 
+            pstmt.setInt(5, a.isDisponible());
+            pstmt.setInt(6, a.getAnno_publicacion());
             
             int resultado = pstmt.executeUpdate();
             
@@ -242,22 +240,22 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         }
 
         ResultSet rs = null;
-        Autor autorObj = (Autor) obj;
+        Ejemplar eObj = (Ejemplar) obj;
         CallableStatement pstmt = null;
 
         try {
             pstmt = conexion.prepareCall(ENCONTRAR_UN_EJEMPLAR);
             pstmt.registerOutParameter(1, OracleTypes.CURSOR);
-            pstmt.setInt(2, autorObj.getId());
+            pstmt.setInt(2, eObj.getId());
             pstmt.execute();
 
             rs = (ResultSet) pstmt.getObject(1);
 
             while (rs.next()) {
-                autorObj.setId(rs.getInt("id"));
-                autorObj.setNombres(rs.getString("nombres"));
-                autorObj.setApellidos(rs.getString("apellidos"));
-                autorObj.setAnno_nacimiento(rs.getInt("anno_nacimiento"));
+                eObj.setId(rs.getInt("id"));
+                eObj.setTitulo(rs.getString("titulo"));
+                eObj.setAnno_publicacion(rs.getInt("anno_publicacion"));
+                eObj.setDisponible(rs.getInt("disponible"));
                 
                 //int idPais = rs.getInt("pais");
                 //Pais pais = (Pais) pDao.buscar(new Pais(idPais));
@@ -280,7 +278,7 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
             }
         }
 
-        return autorObj;
+        return eObj;
     }                
         
     

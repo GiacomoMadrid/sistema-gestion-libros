@@ -14,7 +14,7 @@ public class Ejemplar {
     private int disponible;
     private Integer anno_publicacion;
     
-    public Ejemplar(int id, Autor a, Editorial e, String t, int d, int an){
+    public Ejemplar(int id, Autor a, Editorial e, String t, int d, Integer an){
         this.id = id;
         this.titulo = t;
         this.autor = a;
@@ -30,7 +30,7 @@ public class Ejemplar {
         this.id = id;
     }
     
-    public Ejemplar(Autor a, Editorial e, String t,  int d, int an){
+    public Ejemplar(Autor a, Editorial e, String t,  int d, Integer an){
         this.titulo = t;
         this.autor = a;
         this.editorial = e;
@@ -101,6 +101,11 @@ public class Ejemplar {
         }else{
             return "No";
         }
+    }
+    
+    @Override
+    public String toString(){
+        return id + " - " + titulo;
     }
     
 }

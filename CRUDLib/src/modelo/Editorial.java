@@ -38,7 +38,10 @@ public class Editorial {
     }
     
     
-    
+    @Override
+    public String toString(){
+        return id + " - " + nombre;
+    }
     
     
 }

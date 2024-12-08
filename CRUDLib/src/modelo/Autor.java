@@ -14,7 +14,7 @@ public class Autor {
     private Pais pais;
     private String nombre_completo;
     
-    public Autor(int id, String nombres, String apellidos, int anno_nacimiento, Pais pais){
+    public Autor(int id, String nombres, String apellidos, Integer anno_nacimiento, Pais pais){
         this.id= id;
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -40,7 +40,7 @@ public class Autor {
         this.nombre_completo = nombres + " " + apellidos;               
     }
     
-    public Autor(String nombres, String apellidos, int anno_nacimiento, Pais pais){       
+    public Autor(String nombres, String apellidos, Integer anno_nacimiento, Pais pais){       
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.anno_nacimiento = anno_nacimiento;
@@ -100,6 +100,11 @@ public class Autor {
     
     public String getNombre_completo() {
         return nombres + " " + apellidos;
+    }
+    
+    @Override
+    public String toString(){
+        return id + " - " + nombres + " " + apellidos;
     }
 
 }
