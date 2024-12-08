@@ -12,6 +12,26 @@ public class Pais {
         this.id = id;
         this.nombre = name;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //--------------------------------------------------------------------------
 
     public int getId() {
         return id;
