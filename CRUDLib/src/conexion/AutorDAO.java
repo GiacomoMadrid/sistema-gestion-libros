@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import modelo.Autor;
 import modelo.Pais;
 import oracle.jdbc.OracleTypes;
@@ -207,7 +208,7 @@ public class AutorDAO extends Conexion implements I_Conexiones{
             }
                     
         }catch(SQLException ex){
-            throw new GlobalException("Sentecia no válida");
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         
         }finally{
             try{

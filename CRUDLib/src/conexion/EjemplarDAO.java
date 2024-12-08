@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import modelo.Autor;
 import modelo.Editorial;
 import modelo.Ejemplar;
@@ -125,8 +126,8 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
             }
             
         }catch(SQLException ex){
-            ex.printStackTrace();
-            throw new GlobalException("Llave Duplicada");
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            throw new GlobalException();
         
         }finally{
             try{
@@ -135,7 +136,7 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
                 }
                 desconectar();
             }catch(SQLException ex){
-                throw new GlobalException("Datos inválidos.");                
+                throw new GlobalException();                
             }
         }
         
