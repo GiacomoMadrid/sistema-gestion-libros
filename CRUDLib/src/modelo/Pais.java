@@ -22,13 +22,14 @@ public class Pais {
         this.nombre = name;
     }
     
+    public Pais(String name){
+        this.nombre = name;
+    }
     
-    public ArrayList<Pais> cargar_paises(){
-        
-        
-        return null;   
-    }     
-       
+    public Pais(int id){
+        this.id = id;
+    }
+     
     
     //--------------------------------------------------------------------------
 
