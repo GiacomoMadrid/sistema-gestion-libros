@@ -17,6 +17,9 @@ public class Pais {
     int id;
     String nombre;
     
+    public Pais(){
+    }
+    
     public Pais(int id, String name){
         this.id = id;
         this.nombre = name;
@@ -49,6 +52,10 @@ public class Pais {
         this.nombre = nombre;
     }
     
+    @Override
+    public String toString(){
+        return id + " - " + nombre;
+    }
     
     
 }

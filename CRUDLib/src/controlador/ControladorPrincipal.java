@@ -19,15 +19,16 @@ public class ControladorPrincipal {
     
     ControladorPais contPais;
     ControladorEditorial contEditorial;
-    //ControladorAutor contAutor;
+    ControladorAutor contAutor;
     
     public ControladorPrincipal(frmPrincipal v) throws SQLException{
         this.vista = v;
         this.vistaP = new frmPais();
         this.vistaE = new frmEditorial();
+        this.vistaA = new frmAutor();
         this.contPais = new ControladorPais(vistaP);
         this.contEditorial = new ControladorEditorial(vistaE);
-        //this.contAutor = new ControladorAutor(vistaA);
+        this.contAutor = new ControladorAutor(vistaA);
         
         this.vista.bgBuscar.add(this.vista.radNombre);
         this.vista.bgBuscar.add(this.vista.radAutor);
@@ -46,6 +47,13 @@ public class ControladorPrincipal {
             @Override
             public void actionPerformed(ActionEvent e) {
                 contEditorial.iniciar();                
+            }
+        });
+        
+        this.vista.btnVerAutores.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                contAutor.iniciar();                
             }
         });
     

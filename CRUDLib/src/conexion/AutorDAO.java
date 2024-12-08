@@ -1,24 +1,28 @@
 package conexion;
 
+import conexion.GlobalException;
+import conexion.NoDataException;
 import java.util.Collection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import modelo.Autor;
 import modelo.Pais;
 import oracle.jdbc.OracleTypes;
 /**
  *
  * @author Giacomo
  */
-public class PaisDAO extends Conexion implements I_Conexiones{
-    private static final String MOSTRAR_PAISES ="{? = call mostrar_paises()}" ;
-    private static final String CREAR_PAIS = "{call registrar_pais(?)}";
-    private static final String ELIMINAR_PAIS = "{call eliminar_pais(?)}";
-    private static final String ACTUALIZAR_PAIS = "{call actualizar_pais(?,?)}";
-    private static final String ENCONTRAR_UN_PAIS = "{? = call buscar_pais(?)}" ;
+public class AutorDAO extends Conexion implements I_Conexiones{
+    private static final String MOSTRAR_AUTORES ="{? = call mostrar_autores()}" ;
+    private static final String CREAR_AUTORES = "{call registrar_autor(?,?,?,?)}";
+    private static final String ELIMINAR_AUTORES = "{call eliminar_autor(?)}";
+    private static final String ACTUALIZAR_AUTORES = "{call actualizar_autor(?,?,?,?,?)}";
+    private static final String ENCONTRAR_UN_AUTOR ="{? = call buscar_autor(?)}" ;
     
+    private PaisDAO pDao = new PaisDAO();
     
     @Override
     public Collection mostrar_todo() throws GlobalException, NoDataException {
@@ -34,19 +38,24 @@ public class PaisDAO extends Conexion implements I_Conexiones{
         
         ResultSet rs = null;
         ArrayList lista = new ArrayList();
-        Pais paisObj = null;
+        Autor autorObj = null;
         CallableStatement pstmt =null; 
         
         try{
-            pstmt = conexion.prepareCall(MOSTRAR_PAISES);
+            pstmt = conexion.prepareCall(MOSTRAR_AUTORES);
             pstmt.registerOutParameter(1, OracleTypes.CURSOR);
             pstmt.execute();
             
             rs = (ResultSet)pstmt.getObject(1);
             
             while(rs.next()){
-               paisObj = new Pais(rs.getInt("id"), rs.getString("nombre"));
-               lista.add(paisObj);
+                int paisId = rs.getInt("pais");
+                Pais pais = (Pais) pDao.buscar(new Pais(paisId)); 
+                
+                autorObj = new Autor(rs.getInt("id"), rs.getString("nombres"), 
+                       rs.getString("apellidos"), rs.getInt("anno_nacimiento"), pais);
+                lista.add(autorObj);
+                
             }
             
         }catch(SQLException ex){
@@ -68,9 +77,11 @@ public class PaisDAO extends Conexion implements I_Conexiones{
             }catch(SQLException se){
                 throw new GlobalException("Estatutos no válidos");
             
-            }        
+            }
+        
         }
-                
+        
+        
         if(lista == null || lista.size() == 0){
             throw new NoDataException("No hay datos");
         }
@@ -91,11 +102,14 @@ public class PaisDAO extends Conexion implements I_Conexiones{
         }
         
         CallableStatement pstmt =null;
-        Pais p = (Pais) obj; 
+        Autor a = (Autor) obj; 
         
         try{
-            pstmt = conexion.prepareCall(CREAR_PAIS);
-            pstmt.setString(1, p.getNombre());
+            pstmt = conexion.prepareCall(CREAR_AUTORES);
+            pstmt.setString(1, a.getNombres());
+            pstmt.setString(2, a.getApellidos());  
+            pstmt.setInt(3, a.getPais().getId());  
+            pstmt.setInt(4, a.getAnno_nacimiento());
             boolean resultado  = pstmt.execute();
             
             if(resultado){
@@ -133,11 +147,11 @@ public class PaisDAO extends Conexion implements I_Conexiones{
         }
         
         PreparedStatement pstmt = null;
-        Pais p = (Pais) obj; 
+        Autor a = (Autor) obj; 
         
         try{
-            pstmt = conexion.prepareCall(ELIMINAR_PAIS);
-            pstmt.setInt(1, p.getId());
+            pstmt = conexion.prepareCall(ELIMINAR_AUTORES);
+            pstmt.setInt(1, a.getId());
             int resultado = pstmt.executeUpdate();
             
             if(resultado == 0){
@@ -176,12 +190,15 @@ public class PaisDAO extends Conexion implements I_Conexiones{
         }
         
         PreparedStatement pstmt = null;
-        Pais p = (Pais) obj; 
+        Autor a = (Autor) obj; 
         
         try{
-            pstmt = conexion.prepareCall(ACTUALIZAR_PAIS);
-            pstmt.setInt(1, p.getId());
-            pstmt.setString(2, p.getNombre());
+            pstmt = conexion.prepareCall(ACTUALIZAR_AUTORES);
+            pstmt.setInt(1, a.getId()); 
+            pstmt.setString(2, a.getNombres());  
+            pstmt.setString(3, a.getApellidos());    
+            pstmt.setInt(4, a.getPais().getId()); 
+            pstmt.setInt(5, a.getAnno_nacimiento());
             
             int resultado = pstmt.executeUpdate();
             
@@ -217,18 +234,26 @@ public class PaisDAO extends Conexion implements I_Conexiones{
         }
 
         ResultSet rs = null;
-        Pais paisObj = (Pais) obj;
+        Autor autorObj = (Autor) obj;
         CallableStatement pstmt = null;
 
         try {
-            pstmt = conexion.prepareCall(ENCONTRAR_UN_PAIS);
+            pstmt = conexion.prepareCall(ENCONTRAR_UN_AUTOR);
             pstmt.registerOutParameter(1, OracleTypes.CURSOR);
-            pstmt.setInt(2, paisObj.getId());
-            pstmt.execute();            
-            rs = (ResultSet)pstmt.getObject(1);
-            
-            while(rs.next()){
-                paisObj = new Pais(rs.getInt("id"), rs.getString("nombre"));
+            pstmt.setInt(2, autorObj.getId());
+            pstmt.execute();
+
+            rs = (ResultSet) pstmt.getObject(1);
+
+            while (rs.next()) {
+                autorObj.setId(rs.getInt("id"));
+                autorObj.setNombres(rs.getString("nombres"));
+                autorObj.setApellidos(rs.getString("apellidos"));
+                autorObj.setAnno_nacimiento(rs.getInt("anno_nacimiento"));
+                
+                //int idPais = rs.getInt("pais");
+                //Pais pais = (Pais) pDao.buscar(new Pais(idPais));
+                //autorObj.setPais(pais);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -243,11 +268,13 @@ public class PaisDAO extends Conexion implements I_Conexiones{
                 }
                 desconectar();
             } catch (SQLException se) {
-                se.printStackTrace();
                 throw new GlobalException("Estatutos no válidos");
             }
         }
-        return paisObj;
-    }
+
+        return autorObj;
+    }                
+        
+    
     
 }

@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package vista;
-
+import modelo.Pais;
 /**
  *
  * @author Giacomo
@@ -35,11 +35,11 @@ public class frmCRUDAutor extends javax.swing.JFrame {
         txtApellidos = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtFecha = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        txtPais = new javax.swing.JTextField();
         btnAceptar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        cboxPais = new javax.swing.JComboBox<>();
+        txtFecha = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -58,7 +58,7 @@ public class frmCRUDAutor extends javax.swing.JFrame {
 
         jLabel4.setText("Apellidos:");
 
-        jLabel5.setText("Fecha de Nacimiento:");
+        jLabel5.setText("Año de Nacimiento:");
 
         jLabel6.setText("Pais de Origen:");
 
@@ -90,10 +90,10 @@ public class frmCRUDAutor extends javax.swing.JFrame {
                     .addGroup(panBaseLayout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(panBaseLayout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panBaseLayout.createSequentialGroup()
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPais))
+                                .addComponent(cboxPais, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(panBaseLayout.createSequentialGroup()
                                 .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panBaseLayout.createSequentialGroup()
@@ -109,7 +109,7 @@ public class frmCRUDAutor extends javax.swing.JFrame {
                                     .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(txtID, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                                         .addComponent(txtNombres))))
-                            .addGroup(panBaseLayout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panBaseLayout.createSequentialGroup()
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -138,13 +138,13 @@ public class frmCRUDAutor extends javax.swing.JFrame {
                     .addComponent(txtApellidos)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtFecha)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtFecha))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtPais)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboxPais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(panBaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAceptar)
@@ -215,6 +215,7 @@ public class frmCRUDAutor extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnAceptar;
     public javax.swing.JButton btnCancelar;
+    public javax.swing.JComboBox<Pais> cboxPais;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -222,10 +223,9 @@ public class frmCRUDAutor extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel panBase;
-    private javax.swing.JTextField txtApellidos;
-    private javax.swing.JTextField txtFecha;
-    private javax.swing.JTextField txtID;
-    private javax.swing.JTextField txtNombres;
-    private javax.swing.JTextField txtPais;
+    public javax.swing.JTextField txtApellidos;
+    public javax.swing.JTextField txtFecha;
+    public javax.swing.JTextField txtID;
+    public javax.swing.JTextField txtNombres;
     // End of variables declaration//GEN-END:variables
 }

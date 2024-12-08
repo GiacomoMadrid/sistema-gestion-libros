@@ -12,7 +12,7 @@ public class Ejemplar {
     Autor autor;
     Editorial editorial;
     boolean disponible;
-    Date fecha_publicacion;
+   Integer anno_publicacion;
 
     public int getId() {
         return id;
@@ -54,12 +54,12 @@ public class Ejemplar {
         this.disponible = disponible;
     }
 
-    public Date getFecha_publicacion() {
-        return fecha_publicacion;
+    public Integer getAnno_publicacion() {
+        return anno_publicacion;
     }
 
-    public void setFecha_publicacion(Date fecha_publicacion) {
-        this.fecha_publicacion = fecha_publicacion;
+    public void setAnno_publicacion(int anno_publicacion) {
+        this.anno_publicacion = anno_publicacion;
     }
            
     

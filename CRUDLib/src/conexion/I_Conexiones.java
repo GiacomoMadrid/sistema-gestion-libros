@@ -15,5 +15,7 @@ public interface I_Conexiones {
         
     public void actualizar(Object obj)throws GlobalException, NoDataException;
     
+    public Object buscar(Object obj) throws GlobalException, NoDataException;
+    
    
 }

@@ -2,42 +2,56 @@ package controlador;
 import conexion.GlobalException;
 import conexion.NoDataException;
 import conexion.AutorDAO;
+import conexion.PaisDAO;
 import crudlib.CRUDLib;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.DateFormatter;
+import javax.swing.text.DefaultFormatterFactory;
 import vista.frmAutor;
 import modelo.Autor;
+import modelo.Pais;
+import vista.frmCRUDAutor;
 /**
  *
  * @author Giacomo
  */
 public class ControladorAutor {
-    frmAutor vista;
-    AutorDAO pDao;
+    protected frmAutor vista;
+    protected frmCRUDAutor vCrud;
+    private AutorDAO aDao;
+    private short flag;  
     
     public ControladorAutor(frmAutor v) throws SQLException{
         this.vista = v;
-        this.pDao = new AutorDAO();
-        
+        this.vCrud = new frmCRUDAutor();
+        this.aDao = new AutorDAO();
+               
+              
         //---------------------------------------------------------------------
         
         this.vista.btnAgregar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    crearPais();
-                } catch (GlobalException ex) {
-                    Logger.getLogger(ControladorAutor.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (NoDataException ex) {
-                    Logger.getLogger(ControladorAutor.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                flag = 0;
+                mostrarVistaCRUD(flag);
+                
+            }
+        });
+        
+        this.vista.btnActualizar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                flag = 1;
+                mostrarVistaCRUD(flag);
             }
         });
         
@@ -45,7 +59,7 @@ public class ControladorAutor {
             @Override
             public void actionPerformed(ActionEvent e){
                 try {
-                    eliminarPais();
+                    eliminarAutor();
                 } catch (GlobalException ex) {
                     Logger.getLogger(ControladorAutor.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NoDataException ex) {
@@ -54,11 +68,18 @@ public class ControladorAutor {
             }
         });
         
-        this.vista.btnActualizar.addActionListener(new ActionListener() {
+        //---------------------------------------------------------------------
+        
+        this.vCrud.btnAceptar.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
                 try {
-                    actualizarPais();
+                    if(flag == 0){
+                        crearAutor();
+                    }else{
+                        actualizarAutor();
+                    }
+                    vCrud.dispose();
                 } catch (GlobalException ex) {
                     Logger.getLogger(ControladorAutor.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NoDataException ex) {
@@ -67,28 +88,31 @@ public class ControladorAutor {
             }
         });
         
-        
-        
+        this.vCrud.btnCancelar.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                vCrud.dispose();
+            }
+        });
         
     }
     
     //*****************************************************************************
-    public void mostrarPaises(){
+    public void mostrarAutores(){
         try{
-            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+            
             DefaultTableModel model = new DefaultTableModel();
-            AutorDAO paisDao = new AutorDAO();
 
             model.addColumn("ID");
             model.addColumn("Nombres");
             model.addColumn("Apellidos");
-            model.addColumn("Fecha de Nacimiento");
-            model.addColumn("Pais de Nacimiento");
+            model.addColumn("Pais");
+            model.addColumn("Año de Nacimiento");
 
-            Collection<Autor> autores = paisDao.mostrar_todo();
+            Collection<Autor> autores = aDao.mostrar_todo();
             for(Autor a : autores){
                 model.addRow(new Object[]{a.getId(), a.getNombres(), 
-                    a.getApellidos(), formatDate.format(a.getFecha_nacimiento()), a.getPais()});        
+                    a.getApellidos(), a.getNombrePais(), a.getAnno_nacimiento()});        
             }
             this.vista.tabPais.setModel(model);
 
@@ -98,67 +122,148 @@ public class ControladorAutor {
             this.vista.tabPais.getColumnModel().getColumn(0).setWidth(40);
 
         }catch(GlobalException | NoDataException ex){
-            JOptionPane.showMessageDialog(vista, "Error al cargar los países: " + ex.getMessage());
+            JOptionPane.showMessageDialog(vista, "Error al cargar los autores: " + ex.getMessage());
         }
     }
     
-    public void crearPais() throws GlobalException, NoDataException{
-        String str = JOptionPane.showInputDialog("Nombre del nuevo país: ");
-        if(str != null && str != ""){
-            Autor a = new Autor(str);
-            pDao.crear(a);
-            mostrarPaises();
-            
-        }else{
-            JOptionPane.showMessageDialog(null, "No se agregó el país.");
-        }        
+    public void cargarAutor(){            
+        try{
+            String str = JOptionPane.showInputDialog("Id del autor a actualizar: ");
+            int idAutor = Integer.parseInt(str);
+            Autor aut = (Autor) aDao.buscar(new Autor(idAutor));
+            this.vCrud.txtID.setText(""+aut.getId());
+            this.vCrud.txtNombres.setText(aut.getNombres());
+            this.vCrud.txtApellidos.setText(aut.getApellidos());
+            this.vCrud.txtFecha.setText(""+aut.getAnno_nacimiento());
+                        
+        }catch(GlobalException | NoDataException | NumberFormatException ex){
+            JOptionPane.showMessageDialog(vista, "Error al cargar el autor: " + ex.getMessage());
+        }
+    
+    
     }
     
-    public void eliminarPais() throws GlobalException, NoDataException{
-        String str = JOptionPane.showInputDialog("Id del país a eliminar: ");
+    public void crearAutor() throws GlobalException, NoDataException{
+        String strNombres = this.vCrud.txtNombres.getText();
+        String strApellidos = this.vCrud.txtApellidos.getText();
+        String strAnno = this.vCrud.txtFecha.getText();
+        Pais pais = (Pais) this.vCrud.cboxPais.getItemAt(this.vCrud.cboxPais.getSelectedIndex());
+        Integer anno;
+        
+        if(strAnno.isBlank() || strAnno.isEmpty()){
+            anno = null;
+        }else{
+            anno = Integer.parseInt(strAnno);
+        }
+        
+        if((strNombres != null && strNombres != "")
+                ||(strApellidos != null && strApellidos != "")
+                || (pais != null)){
+                                   
+            Autor a = new Autor(strNombres, strApellidos, anno, pais);
+            aDao.crear(a);
+            mostrarAutores();
+            
+        }else{
+            JOptionPane.showMessageDialog(null, "No se agregó el autor.");
+        }   
+    }
+    
+    public void eliminarAutor() throws GlobalException, NoDataException{
+        String str = JOptionPane.showInputDialog("Id del autor a eliminar: ");
         if(str != null && str != ""){
             try {
                 int id = Integer.parseInt(str);
                 Autor a = new Autor(id);
-                pDao.eliminar(a);
-                mostrarPaises();
+                aDao.eliminar(a);
+                mostrarAutores();
                 
             }catch(NumberFormatException e){
-                JOptionPane.showMessageDialog(null, "ID Inválido\nNo se eliminó ningún país.");    
+                JOptionPane.showMessageDialog(null, "ID Inválido\nNo se eliminó ningún autor.");    
             }
             
         }else{
-            JOptionPane.showMessageDialog(null, "No se eliminó ningún país.");
+            JOptionPane.showMessageDialog(null, "No se eliminó ningún autor.");
         }    
     }
     
-    public void actualizarPais() throws GlobalException, NoDataException{
-        String str = JOptionPane.showInputDialog("Id del país a actualizar: ");
-        if(str != null && str != ""){
+    public void actualizarAutor() throws GlobalException, NoDataException{
+        String strNombres = this.vCrud.txtNombres.getText();
+        String strApellidos = this.vCrud.txtApellidos.getText();
+        String strAnno = this.vCrud.txtFecha.getText();
+        Pais pais = (Pais) this.vCrud.cboxPais.getItemAt(this.vCrud.cboxPais.getSelectedIndex());
+        String str = this.vCrud.txtID.getText();
+         if((str != null && str != "")
+                || (strNombres != null && strNombres != "")
+                ||(strApellidos != null && strApellidos != "")
+                || (pais != null)){
             try {
-                int id = Integer.parseInt(str);                
-                String nombre = JOptionPane.showInputDialog("Nuevo nombre para el pais: ");                
-                Autor a = new Autor(id, nombre);
+                int id = Integer.parseInt(str); 
+                int intAnno = Integer.parseInt(strAnno); 
                 
-                pDao.actualizar(a);
-                mostrarPaises();
+                Autor a = new Autor(id, strNombres, strApellidos, intAnno, pais);
+                
+                aDao.actualizar(a);
+                mostrarAutores();
                 
             }catch(NumberFormatException e){
                 JOptionPane.showMessageDialog(null, "ID Invaálido.");    
             }
             
         }else{
-            JOptionPane.showMessageDialog(null, "No se actualizó ningún país.");
-        }    
+            JOptionPane.showMessageDialog(null, "No se actualizó ningún autor.");
+        } 
     }
     
+    public void cargarPaisesACombobox(){
+        try{
+            PaisDAO paisDao = new PaisDAO();
+            Collection<Pais> paises = paisDao.mostrar_todo();
+            for(Pais p : paises){
+                this.vCrud.cboxPais.addItem(p);        
+            }
+
+        }catch(GlobalException | NoDataException ex){
+            JOptionPane.showMessageDialog(vista, "Error al cargar los países: " + ex.getMessage());
+        }
+    
+    }
+    
+    //*****************************************************************************
+    
+    public void mostrarVistaCRUD(int a){
+        this.vCrud.setLocationRelativeTo(null);
+        this.vCrud.setVisible(true);
+        
+        if(a==0){
+            limpiarComponentesCRUD();
+        
+        }else{
+            cargarAutor();
+        }
+        
+    }
+       
+    
+    public void limpiarComponentesCRUD(){
+        this.vCrud.txtID.setText("Autoincremental");
+        this.vCrud.txtNombres.setText("");
+        this.vCrud.txtApellidos.setText("");
+        this.vCrud.txtFecha.setText("");  
+        
+        if(this.vCrud.cboxPais.getItemCount()>0){
+            this.vCrud.cboxPais.setSelectedIndex(0);
+        }else{
+            this.vCrud.cboxPais.setSelectedIndex(-1);
+        }
+    }
     
     
     public void iniciar(){
         this.vista.setLocationRelativeTo(null);
         this.vista.setVisible(true);
-        mostrarPaises();        
-        
+        mostrarAutores();        
+        cargarPaisesACombobox();
     }
     
     

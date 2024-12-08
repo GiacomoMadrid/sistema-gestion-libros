@@ -206,6 +206,11 @@ public class EditorialDAO extends Conexion implements I_Conexiones{
         
     
     }
+
+    @Override
+    public Object buscar(Object obj) throws GlobalException, NoDataException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     
     
