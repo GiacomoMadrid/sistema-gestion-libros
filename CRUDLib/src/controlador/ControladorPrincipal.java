@@ -122,7 +122,13 @@ public class ControladorPrincipal {
         this.vista.btnSolicitar.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                int id = Integer.parseInt(JOptionPane.showInputDialog("Codigo del libro a solicitar."));
+                try {
+                    solicitarLibro();
+                } catch (GlobalException ex) {
+                    Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NoDataException ex) {
+                    Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 
                 
             }
@@ -332,9 +338,43 @@ public class ControladorPrincipal {
              
     }
     
+    //**************************************************************************
     
+    public void solicitarLibro() throws GlobalException, NoDataException{
+        try {
+            String str = (JOptionPane.showInputDialog("Codigo del libro a solicitar."));
+            if(str.isBlank() || str.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Código no válido, por favor, inténtelo de nuevo");
+            }else{
+                int id = Integer.parseInt(str);
+                Ejemplar ejm = new Ejemplar(id);
+                ejDao.solicitar(ejm);                
+            }
+            
+            mostrarTodo();
+            
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "ID Invaálido.");  
+        }
+    }
     
-    
+    public void regresarLibro() throws GlobalException, NoDataException{
+        try {
+            String str = (JOptionPane.showInputDialog("Codigo del libro a solicitar."));
+            if(str.isBlank() || str.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Código no válido, por favor, inténtelo de nuevo");
+            }else{
+                int id = Integer.parseInt(str);
+                Ejemplar ejm = new Ejemplar(id);
+                ejDao.devolver(ejm);                
+            }
+            
+            mostrarTodo();
+            
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "ID Invaálido.");  
+        }
+    }
     
     
     

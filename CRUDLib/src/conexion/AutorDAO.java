@@ -119,7 +119,7 @@ public class AutorDAO extends Conexion implements I_Conexiones{
             
         }catch(SQLException ex){
             ex.printStackTrace();
-            throw new GlobalException("Llave Duplicada");
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         
         }finally{
             try{
@@ -160,7 +160,7 @@ public class AutorDAO extends Conexion implements I_Conexiones{
             }
                     
         }catch(SQLException ex){
-            throw new GlobalException("Sentecia no válida");
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         
         }finally{
             try{
@@ -252,9 +252,9 @@ public class AutorDAO extends Conexion implements I_Conexiones{
                 autorObj.setApellidos(rs.getString("apellidos"));
                 autorObj.setAnno_nacimiento(rs.getInt("anno_nacimiento"));
                 
-                //int idPais = rs.getInt("pais");
-                //Pais pais = (Pais) pDao.buscar(new Pais(idPais));
-                //autorObj.setPais(pais);
+                int idPais = rs.getInt("pais");
+                Pais pais = (Pais) pDao.buscar(new Pais(idPais));
+                autorObj.setPais(pais);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

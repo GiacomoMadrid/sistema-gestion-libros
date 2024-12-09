@@ -24,6 +24,8 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
     private static final String ELIMINAR_EJEMPLARES = "{call eliminar_ejemplar(?)}";
     private static final String ACTUALIZAR_EJEMPLARES = "{call actualizar_ejemplar(?,?,?,?,?,?)}";
     private static final String ENCONTRAR_UN_EJEMPLAR ="{? = call buscar_ejemplar(?)}" ;
+    private static final String SOLICITAR_EJEMPLAR ="{call pedir_libro(?)}" ;
+    private static final String DEVOLVER_EJEMPLAR ="{call devolver_libro(?)}" ;
     
     private PaisDAO pDao = new PaisDAO();
     private EditorialDAO eDao = new EditorialDAO();
@@ -71,7 +73,7 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
             }
             
         }catch(SQLException ex){
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getMessage());
             throw new GlobalException("Sentencia inválida");
         
         }finally{
@@ -214,7 +216,7 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
             }
                     
         }catch(SQLException ex){
-            throw new GlobalException("Sentecia no válida");
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         
         }finally{
             try{
@@ -258,12 +260,17 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
                 eObj.setAnno_publicacion(rs.getInt("anno_publicacion"));
                 eObj.setDisponible(rs.getInt("disponible"));
                 
-                //int idPais = rs.getInt("pais");
-                //Pais pais = (Pais) pDao.buscar(new Pais(idPais));
-                //autorObj.setPais(pais);
+                int idEditorial = rs.getInt("editorial");
+                Editorial ed = (Editorial) eDao.buscar(new Editorial(idEditorial));
+                eObj.setEditorial(ed);
+                
+                int idAutor = rs.getInt("autor");
+                Autor aut = (Autor) aDao.buscar(new Autor(idAutor));
+                eObj.setAutor(aut);
+                
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getMessage());
             throw new GlobalException("Sentencia inválida");
         } finally {
             try {
@@ -282,6 +289,78 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         return eObj;
     }                
         
+    public void solicitar(Object obj) throws GlobalException, NoDataException{
+        try {
+            conectar();
+        } catch (ClassNotFoundException ex) {
+            throw new GlobalException("No se ha localizado el driver");
+        } catch (SQLException exe) {
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+        
+        ResultSet rs = null;
+        Ejemplar eObj = (Ejemplar) obj;
+        CallableStatement pstmt = null;
+        
+        try {
+            pstmt = conexion.prepareCall(SOLICITAR_EJEMPLAR);
+            pstmt.setInt(1, eObj.getId());
+            pstmt.execute();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            throw new GlobalException("Sentencia inválida");
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                desconectar();
+            } catch (SQLException se) {
+                throw new GlobalException("Estatutos no válidos");
+            }
+        }
     
+    }
+    
+    public void devolver(Object obj) throws GlobalException, NoDataException{
+        try {
+            conectar();
+        } catch (ClassNotFoundException ex) {
+            throw new GlobalException("No se ha localizado el driver");
+        } catch (SQLException exe) {
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+        
+        ResultSet rs = null;
+        Ejemplar eObj = (Ejemplar) obj;
+        CallableStatement pstmt = null;
+        
+        try {
+            pstmt = conexion.prepareCall(DEVOLVER_EJEMPLAR);
+            pstmt.setInt(1, eObj.getId());
+            pstmt.execute();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            throw new GlobalException("Sentencia inválida");
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                desconectar();
+            } catch (SQLException se) {
+                throw new GlobalException("Estatutos no válidos");
+            }
+        }
+    
+    }
     
 }
