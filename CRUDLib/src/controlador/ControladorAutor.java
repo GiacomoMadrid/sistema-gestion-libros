@@ -245,7 +245,7 @@ public class ControladorAutor {
         }else{
             cargarAutor();
         }
-        
+        cargarPaisesACombobox();
     }
        
     

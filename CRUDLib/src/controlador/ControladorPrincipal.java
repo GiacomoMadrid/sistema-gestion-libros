@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import modelo.Autor;
 import modelo.Editorial;
 import modelo.Ejemplar;
+import modelo.Pais;
 import vista.frmEditorial;
 import vista.frmPrincipal;
 import vista.frmAutor;
@@ -151,7 +152,57 @@ public class ControladorPrincipal {
         this.vista.btnBuscar.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                //TO DO
+                String str = vista.txtBusqueda.getText();
+                int id = Integer.parseInt(str);
+                
+                if(vista.radAutor.isSelected()){
+                    try {
+                        buscarPorAutor(id);
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radDisponible.isSelected()){
+                    try {
+                        buscarPorDisponibiliad(id);
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radEditorial.isSelected()){
+                    try {
+                        buscarPorEditorial(id);
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radNombre.isSelected()){
+                    try {
+                        buscarPorTitulo(str);
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radPais.isSelected()){
+                    try {
+                        buscarPorPais(id);
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                
+                
             }
         });
         
@@ -291,12 +342,6 @@ public class ControladorPrincipal {
     }
     
     public void actualizarEjemplar() throws GlobalException, NoDataException{
-        this.vCrud.chkDisponible.setSelected(false);
-        this.vCrud.chkDisponible.setEnabled(true);
-        
-        this.vCrud.chkDisponible.setSelected(true);
-        this.vCrud.chkDisponible.setEnabled(false);
-        
         String str = this.vCrud.txtID.getText();
         String strTitulo = this.vCrud.txtTitulo.getText();
         String strAnno = this.vCrud.txtAnno.getText();
@@ -348,54 +393,47 @@ public class ControladorPrincipal {
     }
     
     public void buscarPorDisponibiliad(int id)throws GlobalException, NoDataException{
-        Ejemplar ej = new Ejemplar(id);
-        mostrarLista(ejDao.buscar_por_disponibilidad(ej));    
+        mostrarLista(ejDao.buscar_por_disponibilidad());    
     }
     
     public void buscarPorTitulo(String nom)throws GlobalException, NoDataException{
         Ejemplar ej = new Ejemplar(nom);
-        mostrarLista(ejDao.buscar_por_titulo(nom));    
+        mostrarLista(ejDao.buscar_por_titulo(ej));    
+    }
+ 
+      public void buscarPorPais(int id)throws GlobalException, NoDataException{
+        Pais p = new Pais(id);
+        mostrarLista(ejDao.buscar_por_pais(p));    
     }
             
             
-            
     public void mostrarLista(Collection<Ejemplar> lista){
-        try{
-            
-            DefaultTableModel model = new DefaultTableModel();
-
-            model.addColumn("ID");
-            model.addColumn("Título");
-            model.addColumn("Autor");
-            model.addColumn("Editorial");
-            model.addColumn("Año de Publicacion");
-            model.addColumn("Pais");
-            model.addColumn("Disponible");
-
-            lista = ejDao.mostrar_todo();
-            for(Ejemplar ejem : lista){
-                if(ejem.getAnno_publicacion() != null){
-                    model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(), 
-                        ejem.getNombreAutor(), ejem.getNombreEditorial(),  
-                        ejem.getAnno_publicacion(), ejem.getAutor().getNombrePais(),
-                        ejem.getDisponibilidad()});
-                }else{
-                    model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(), 
-                        ejem.getNombreAutor(), ejem.getNombreEditorial(),  
-                        "--", ejem.getAutor().getNombrePais(),
-                        ejem.getDisponibilidad()});
-                }
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Título");
+        model.addColumn("Autor");
+        model.addColumn("Editorial");
+        model.addColumn("Año de Publicacion");
+        model.addColumn("Pais");
+        model.addColumn("Disponible");
+        for(Ejemplar ejem : lista){
+            if(ejem.getAnno_publicacion() != null){
+                model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(),
+                    ejem.getNombreAutor(), ejem.getNombreEditorial(),
+                    ejem.getAnno_publicacion(), ejem.getAutor().getNombrePais(),
+                    ejem.getDisponibilidad()});
+            }else{
+                model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(),
+                    ejem.getNombreAutor(), ejem.getNombreEditorial(),
+                    "--", ejem.getAutor().getNombrePais(),
+                    ejem.getDisponibilidad()});
             }
-            this.vista.tabPrincipal.setModel(model);
-
-            this.vista.tabPrincipal.getColumnModel().getColumn(0).setPreferredWidth(40);
-            this.vista.tabPrincipal.getColumnModel().getColumn(0).setMinWidth(40);
-            this.vista.tabPrincipal.getColumnModel().getColumn(0).setMaxWidth(40);
-            this.vista.tabPrincipal.getColumnModel().getColumn(0).setWidth(40);
-
-        }catch(GlobalException | NoDataException ex){
-            JOptionPane.showMessageDialog(vista, "Error al cargar los autores: " + ex.getMessage());
         }
+        this.vista.tabPrincipal.setModel(model);
+        this.vista.tabPrincipal.getColumnModel().getColumn(0).setPreferredWidth(40);
+        this.vista.tabPrincipal.getColumnModel().getColumn(0).setMinWidth(40);
+        this.vista.tabPrincipal.getColumnModel().getColumn(0).setMaxWidth(40);
+        this.vista.tabPrincipal.getColumnModel().getColumn(0).setWidth(40);
     }
             
     //**************************************************************************
@@ -503,7 +541,7 @@ public class ControladorPrincipal {
         }
         
         this.vCrud.chkDisponible.setSelected(true);
-        this.vCrud.chkDisponible.setEnabled(false);
+        this.vCrud.chkDisponible.setEnabled(true);
     }
         
     public void iniciar(){

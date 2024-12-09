@@ -72,7 +72,6 @@ public class frmPrincipal extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("CRUD DE LIBROS");
 
-        txtBusqueda.setText("Buscar Libros por...");
         txtBusqueda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBusquedaActionPerformed(evt);
