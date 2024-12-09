@@ -67,19 +67,19 @@
                       </Group>
                       <Component id="btnMostrarTodo" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="49" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
+                  <EmptySpace pref="65" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="btnAgregar" min="-2" pref="119" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnActualizar" min="-2" pref="133" max="-2" attributes="0"/>
+                          <Component id="btnActualizar" min="-2" pref="141" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnEliminar" min="-2" pref="107" max="-2" attributes="0"/>
+                          <Component id="btnEliminar" min="-2" pref="119" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Component id="btnSolicitar" min="-2" pref="183" max="-2" attributes="0"/>
+                          <Component id="btnSolicitar" min="-2" pref="191" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnReporte" min="-2" pref="182" max="-2" attributes="0"/>
+                          <Component id="btnReporte" min="-2" pref="194" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>

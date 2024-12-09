@@ -165,7 +165,7 @@ public class ControladorPrincipal {
                     
                 }else if(vista.radDisponible.isSelected()){
                     try {
-                        buscarPorDisponibiliad(Integer.parseInt(str));
+                        buscarPorDisponibiliad();
                     } catch (GlobalException ex) {
                         Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (NoDataException ex) {
@@ -391,7 +391,7 @@ public class ControladorPrincipal {
         mostrarLista(ejDao.buscar_por_editorial(ed));    
     }
     
-    public void buscarPorDisponibiliad(int id)throws GlobalException, NoDataException{
+    public void buscarPorDisponibiliad()throws GlobalException, NoDataException{
         mostrarLista(ejDao.buscar_por_disponibilidad());    
     }
     
@@ -440,7 +440,9 @@ public class ControladorPrincipal {
     public void solicitarLibro() throws GlobalException, NoDataException{
         try {
             String str = (JOptionPane.showInputDialog("Codigo del libro a solicitar."));
-            if(str.isBlank() || str.isEmpty()){
+            if(str == null){
+                JOptionPane.showMessageDialog(null, "No se ingresó ningún código");
+            }else if(str.isBlank() || str.isEmpty()){
                 JOptionPane.showMessageDialog(null, "Código no válido, por favor, inténtelo de nuevo");
             }else{
                 int id = Integer.parseInt(str);
