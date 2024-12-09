@@ -21,6 +21,7 @@ import vista.frmPrincipal;
 import vista.frmAutor;
 import vista.frmCRUDEjemplar;
 import vista.frmPais;
+import vista.frmReporte;
 
 /**
  *
@@ -32,6 +33,7 @@ public class ControladorPrincipal {
     protected frmEditorial vistaE;
     protected frmAutor vistaA;
     protected frmCRUDEjemplar vCrud;
+    protected frmReporte vistaReporte;
     
     private ControladorPais contPais;
     private ControladorEditorial contEditorial;
@@ -49,6 +51,7 @@ public class ControladorPrincipal {
         this.vistaE = new frmEditorial();
         this.vistaA = new frmAutor();
         this.vCrud = new frmCRUDEjemplar();
+        this.vistaReporte = new frmReporte();
         
         this.contPais = new ControladorPais(vistaP);
         this.contEditorial = new ControladorEditorial(vistaE);
@@ -138,7 +141,62 @@ public class ControladorPrincipal {
         this.vista.btnReporte.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                //TO DO
+                vistaReporte.txtReporte.setText("");
+                String str = vista.txtBusqueda.getText();
+                vistaReporte.setLocationRelativeTo(null);
+                vistaReporte.setVisible(true);
+                
+                if(vista.radAutor.isSelected()){
+                    try {
+                        Autor aut = new Autor(Integer.parseInt(str));
+                        imprimirReporte(ejDao.buscar_por_autor(aut));
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radDisponible.isSelected()){
+                    try {
+                        imprimirReporte(ejDao.buscar_por_disponibilidad());
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radEditorial.isSelected()){
+                    try {                        
+                        Editorial ed = new Editorial(Integer.parseInt(str));
+                        imprimirReporte(ejDao.buscar_por_editorial(ed));;
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radNombre.isSelected()){
+                    try {                        
+                        imprimirReporte(ejDao.buscar_por_titulo(str));
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }else if(vista.radPais.isSelected()){
+                    try {
+                        Pais p = new Pais(Integer.parseInt(str));
+                        imprimirReporte(ejDao.buscar_por_autor(p));
+                    } catch (GlobalException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoDataException ex) {
+                        Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                
+                
             }
         });
         
@@ -475,7 +533,17 @@ public class ControladorPrincipal {
         }
     }
     
-    
+    public void imprimirReporte(Collection<Ejemplar> lista){        
+        for(Ejemplar ejem : lista){
+            try {
+                ejDao.mostrar_data(ejem.getId(), vistaReporte.txtReporte);
+            } catch (GlobalException ex) {
+                Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoDataException ex) {
+                Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+    }
     
     
     

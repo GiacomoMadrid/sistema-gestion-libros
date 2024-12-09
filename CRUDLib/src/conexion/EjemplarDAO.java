@@ -9,6 +9,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import modelo.Autor;
 import modelo.Editorial;
 import modelo.Ejemplar;
@@ -18,7 +19,7 @@ import oracle.jdbc.OracleTypes;
  *
  * @author Giacomo
  */
-public class EjemplarDAO extends Conexion implements I_Conexiones{
+public class EjemplarDAO extends Conexion implements I_Conexiones{    
     private static final String MOSTRAR_EJEMPLARES ="{? = call mostrar_todo()}" ;
     private static final String CREAR_EJEMPLARES = "{call registrar_ejemplar(?,?,?,?)}";
     private static final String ELIMINAR_EJEMPLARES = "{call eliminar_ejemplar(?)}";
@@ -31,7 +32,8 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
     private static final String BUSCAR_POR_AUTOR ="{? = call buscar_por_autor(?)}";
     private static final String BUSCAR_POR_PAIS ="{? = call buscar_por_pais(?)}";
     private static final String BUSCAR_DISPONIBLES ="{? = call buscar_por_disponibilidad()}";
-    
+    private static final String MOSTRAR_DATA = "{call mostrar_data(?, ?, ?, ?, ?, ?, ?)}";
+    private static final String OBTENER_LINEA = "BEGIN DBMS_OUTPUT.GET_LINE(?, ?); END;";
     
     private PaisDAO pDao = new PaisDAO();
     private EditorialDAO eDao = new EditorialDAO();
@@ -720,6 +722,60 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         }          
         return lista;  
     
+    }
+    
+    
+    public void mostrar_data(int ejemplarId, JTextArea textArea) throws GlobalException, NoDataException{
+        try {
+            conectar();
+        } catch (ClassNotFoundException ex) {
+            throw new GlobalException("No se ha localizado el driver");
+        } catch (SQLException exe) {
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+
+        CallableStatement procedimientoStmt = null;
+
+        try {
+            procedimientoStmt = conexion.prepareCall(MOSTRAR_DATA);
+
+            procedimientoStmt.setInt(1, ejemplarId);
+
+             procedimientoStmt.registerOutParameter(2, OracleTypes.STRUCT, "EJEMPLAR");  // lib_rec
+            procedimientoStmt.registerOutParameter(3, OracleTypes.VARCHAR);  // pais_id
+            procedimientoStmt.registerOutParameter(4, OracleTypes.VARCHAR);  // autor_nombres
+            procedimientoStmt.registerOutParameter(5, OracleTypes.VARCHAR);  // autor_apellidos
+            procedimientoStmt.registerOutParameter(6, OracleTypes.VARCHAR);  // ed_nombre
+            procedimientoStmt.registerOutParameter(7, OracleTypes.VARCHAR);  // pais_nombre
+
+            procedimientoStmt.execute();
+
+            String autorNombres = procedimientoStmt.getString(4);
+            String autorApellidos = procedimientoStmt.getString(5);
+            String editorialNombre = procedimientoStmt.getString(6);
+            String paisNombre = procedimientoStmt.getString(7);
+
+            StringBuilder reporteTexto = new StringBuilder();
+            reporteTexto.append("*************************************************************************\n");
+            reporteTexto.append("Detalles del Ejemplar\n");
+            reporteTexto.append("Autor: ").append(autorNombres).append(" ").append(autorApellidos).append("\n");
+            reporteTexto.append("Editorial: ").append(editorialNombre).append("\n");
+            reporteTexto.append("País: ").append(paisNombre).append("\n");
+            reporteTexto.append("*************************************************************************\n");
+
+            textArea.append(reporteTexto.toString());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            textArea.setText("Error al ejecutar el procedimiento: " + e.getMessage());
+        } finally {
+            try {
+                if (procedimientoStmt != null) procedimientoStmt.close();
+                if (conexion != null) conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     
