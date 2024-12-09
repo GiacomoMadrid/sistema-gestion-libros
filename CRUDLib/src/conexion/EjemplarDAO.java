@@ -26,6 +26,12 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
     private static final String ENCONTRAR_UN_EJEMPLAR ="{? = call buscar_ejemplar(?)}" ;
     private static final String SOLICITAR_EJEMPLAR ="{call pedir_libro(?)}" ;
     private static final String DEVOLVER_EJEMPLAR ="{call devolver_libro(?)}" ;
+    private static final String BUSCAR_POR_TITULO ="{call buscar_por_titulo(?)}";
+    private static final String BUSCAR_POR_EDITORIAL ="{call buscar_por_editorial(?)}";
+    private static final String BUSCAR_POR_AUTOR ="{call buscar_por_autor(?)}";
+    private static final String BUSCAR_POR_PAIS ="{call buscar_por_pais(?)}";
+    private static final String BUSCAR_DISPONIBLES ="{call buscar_por_disponibilidad(?)}";
+    
     
     private PaisDAO pDao = new PaisDAO();
     private EditorialDAO eDao = new EditorialDAO();
@@ -362,5 +368,282 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         }
     
     }
+    
+    public Collection buscar_por_autor(Object obj)throws GlobalException, NoDataException{
+        try{
+            conectar();
+        
+        }catch(ClassNotFoundException ex){
+            throw new GlobalException("No se ha localizado el driver"); 
+            
+        }catch(SQLException exe){
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+        
+        ResultSet rs = null;
+        ArrayList lista = new ArrayList();
+        Ejemplar ejm = null;
+        CallableStatement pstmt =null; 
+        
+        try{
+            pstmt = conexion.prepareCall(BUSCAR_POR_AUTOR);
+            pstmt.registerOutParameter(1, OracleTypes.CURSOR);
+            pstmt.execute();
+            
+            rs = (ResultSet)pstmt.getObject(1);
+            
+            while(rs.next()){
+                int autorId = rs.getInt("autor");                
+                int edId = rs.getInt("editorial");
+                Autor autor = (Autor) aDao.buscar(new Autor(autorId)); 
+                Editorial editorial = (Editorial) eDao.buscar(new Editorial(edId)); 
+                
+                ejm = new Ejemplar(
+                        rs.getInt("id"), 
+                        autor,
+                        editorial,
+                        rs.getString("titulo"), 
+                        rs.getInt("disponible"), 
+                        rs.getInt("anno_publicacion")
+                );
+                lista.add(ejm);                
+            }
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            throw new GlobalException("Sentencia inválida");
+        
+        }finally{
+            try{
+                if(rs != null){
+                    rs.close();
+                }
+                
+                if(pstmt != null){
+                    pstmt.close();
+                }
+                
+                desconectar();
+                
+            }catch(SQLException se){
+                throw new GlobalException("Estatutos no válidos");
+            
+            }        
+        }
+                
+        if(lista == null || lista.size() == 0){
+            throw new NoDataException("No hay datos");
+        }        
+        return lista;  
+    
+    }
+    
+    public Collection buscar_por_editorial(Object obj)throws GlobalException, NoDataException{
+        try{
+            conectar();
+        
+        }catch(ClassNotFoundException ex){
+            throw new GlobalException("No se ha localizado el driver"); 
+            
+        }catch(SQLException exe){
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+        
+        ResultSet rs = null;
+        ArrayList lista = new ArrayList();
+        Ejemplar ejm = null;
+        CallableStatement pstmt =null; 
+        
+        try{
+            pstmt = conexion.prepareCall(BUSCAR_POR_EDITORIAL);
+            pstmt.registerOutParameter(1, OracleTypes.CURSOR);
+            pstmt.execute();
+            
+            rs = (ResultSet)pstmt.getObject(1);
+            
+            while(rs.next()){
+                int autorId = rs.getInt("autor");                
+                int edId = rs.getInt("editorial");
+                Autor autor = (Autor) aDao.buscar(new Autor(autorId)); 
+                Editorial editorial = (Editorial) eDao.buscar(new Editorial(edId)); 
+                
+                ejm = new Ejemplar(
+                        rs.getInt("id"), 
+                        autor,
+                        editorial,
+                        rs.getString("titulo"), 
+                        rs.getInt("disponible"), 
+                        rs.getInt("anno_publicacion")
+                );
+                lista.add(ejm);                
+            }
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            throw new GlobalException("Sentencia inválida");
+        
+        }finally{
+            try{
+                if(rs != null){
+                    rs.close();
+                }
+                
+                if(pstmt != null){
+                    pstmt.close();
+                }
+                
+                desconectar();
+                
+            }catch(SQLException se){
+                throw new GlobalException("Estatutos no válidos");
+            
+            }        
+        }
+                
+        if(lista == null || lista.size() == 0){
+            throw new NoDataException("No hay datos");
+        }        
+        return lista;  
+    
+    }
+    
+    public Collection buscar_por_disponibilidad(Object obj)throws GlobalException, NoDataException{
+        try{
+            conectar();
+        
+        }catch(ClassNotFoundException ex){
+            throw new GlobalException("No se ha localizado el driver"); 
+            
+        }catch(SQLException exe){
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+        
+        ResultSet rs = null;
+        ArrayList lista = new ArrayList();
+        Ejemplar ejm = null;
+        CallableStatement pstmt =null; 
+        
+        try{
+            pstmt = conexion.prepareCall(BUSCAR_DISPONIBLES);
+            pstmt.registerOutParameter(1, OracleTypes.CURSOR);
+            pstmt.execute();
+            
+            rs = (ResultSet)pstmt.getObject(1);
+            
+            while(rs.next()){
+                int autorId = rs.getInt("autor");                
+                int edId = rs.getInt("editorial");
+                Autor autor = (Autor) aDao.buscar(new Autor(autorId)); 
+                Editorial editorial = (Editorial) eDao.buscar(new Editorial(edId)); 
+                
+                ejm = new Ejemplar(
+                        rs.getInt("id"), 
+                        autor,
+                        editorial,
+                        rs.getString("titulo"), 
+                        rs.getInt("disponible"), 
+                        rs.getInt("anno_publicacion")
+                );
+                lista.add(ejm);                
+            }
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            throw new GlobalException("Sentencia inválida");
+        
+        }finally{
+            try{
+                if(rs != null){
+                    rs.close();
+                }
+                
+                if(pstmt != null){
+                    pstmt.close();
+                }
+                
+                desconectar();
+                
+            }catch(SQLException se){
+                throw new GlobalException("Estatutos no válidos");
+            
+            }        
+        }
+                
+        if(lista == null || lista.size() == 0){
+            throw new NoDataException("No hay datos");
+        }        
+        return lista;  
+    
+    }
+    
+    public Collection buscar_por_titulo(Object obj)throws GlobalException, NoDataException{
+        try{
+            conectar();
+        
+        }catch(ClassNotFoundException ex){
+            throw new GlobalException("No se ha localizado el driver"); 
+            
+        }catch(SQLException exe){
+            throw new NoDataException("La base de datos no se encuentra disponible");
+        }
+        
+        ResultSet rs = null;
+        ArrayList lista = new ArrayList();
+        Ejemplar ejm = null;
+        CallableStatement pstmt =null; 
+        
+        try{
+            pstmt = conexion.prepareCall(BUSCAR_POR_TITULO);
+            pstmt.registerOutParameter(1, OracleTypes.CURSOR);
+            pstmt.execute();
+            
+            rs = (ResultSet)pstmt.getObject(1);
+            
+            while(rs.next()){
+                int autorId = rs.getInt("autor");                
+                int edId = rs.getInt("editorial");
+                Autor autor = (Autor) aDao.buscar(new Autor(autorId)); 
+                Editorial editorial = (Editorial) eDao.buscar(new Editorial(edId)); 
+                
+                ejm = new Ejemplar(
+                        rs.getInt("id"), 
+                        autor,
+                        editorial,
+                        rs.getString("titulo"), 
+                        rs.getInt("disponible"), 
+                        rs.getInt("anno_publicacion")
+                );
+                lista.add(ejm);                
+            }
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            throw new GlobalException("Sentencia inválida");
+        
+        }finally{
+            try{
+                if(rs != null){
+                    rs.close();
+                }
+                
+                if(pstmt != null){
+                    pstmt.close();
+                }
+                
+                desconectar();
+                
+            }catch(SQLException se){
+                throw new GlobalException("Estatutos no válidos");
+            
+            }        
+        }
+                
+        if(lista == null || lista.size() == 0){
+            throw new NoDataException("No hay datos");
+        }        
+        return lista;  
+    
+    }
+    
     
 }

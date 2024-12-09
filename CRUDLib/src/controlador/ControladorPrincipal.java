@@ -195,7 +195,7 @@ public class ControladorPrincipal {
             model.addColumn("Autor");
             model.addColumn("Editorial");
             model.addColumn("Año de Publicacion");
-            //model.addColumn("Pais");
+            model.addColumn("Pais");
             model.addColumn("Disponible");
 
             Collection<Ejemplar> ejemplares = ejDao.mostrar_todo();
@@ -203,12 +203,12 @@ public class ControladorPrincipal {
                 if(ejem.getAnno_publicacion() != null){
                     model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(), 
                         ejem.getNombreAutor(), ejem.getNombreEditorial(),  
-                        ejem.getAnno_publicacion(), /*ejem.getAutor().getNombrePais(),*/
+                        ejem.getAnno_publicacion(), ejem.getAutor().getNombrePais(),
                         ejem.getDisponibilidad()});
                 }else{
                     model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(), 
                         ejem.getNombreAutor(), ejem.getNombreEditorial(),  
-                        "--", /*ejem.getAutor().getNombrePais(),*/
+                        "--", ejem.getAutor().getNombrePais(),
                         ejem.getDisponibilidad()});
                 }
             }
@@ -271,8 +271,7 @@ public class ControladorPrincipal {
         }   
                         
     }
-    
-    
+        
     public void eliminarEjemplar() throws GlobalException, NoDataException{
         String str = JOptionPane.showInputDialog("Id del autor a eliminar: ");
         if(str != null && str != ""){
@@ -338,6 +337,67 @@ public class ControladorPrincipal {
              
     }
     
+    public void buscarPorAutor(int id)throws GlobalException, NoDataException{
+        Autor aut = new Autor(id);
+        mostrarLista(ejDao.buscar_por_autor(aut));    
+    }
+    
+    public void buscarPorEditorial(int id)throws GlobalException, NoDataException{
+        Editorial ed = new Editorial(id);
+        mostrarLista(ejDao.buscar_por_editorial(ed));    
+    }
+    
+    public void buscarPorDisponibiliad(int id)throws GlobalException, NoDataException{
+        Ejemplar ej = new Ejemplar(id);
+        mostrarLista(ejDao.buscar_por_disponibilidad(ej));    
+    }
+    
+    public void buscarPorTitulo(String nom)throws GlobalException, NoDataException{
+        Ejemplar ej = new Ejemplar(nom);
+        mostrarLista(ejDao.buscar_por_titulo(nom));    
+    }
+            
+            
+            
+    public void mostrarLista(Collection<Ejemplar> lista){
+        try{
+            
+            DefaultTableModel model = new DefaultTableModel();
+
+            model.addColumn("ID");
+            model.addColumn("Título");
+            model.addColumn("Autor");
+            model.addColumn("Editorial");
+            model.addColumn("Año de Publicacion");
+            model.addColumn("Pais");
+            model.addColumn("Disponible");
+
+            lista = ejDao.mostrar_todo();
+            for(Ejemplar ejem : lista){
+                if(ejem.getAnno_publicacion() != null){
+                    model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(), 
+                        ejem.getNombreAutor(), ejem.getNombreEditorial(),  
+                        ejem.getAnno_publicacion(), ejem.getAutor().getNombrePais(),
+                        ejem.getDisponibilidad()});
+                }else{
+                    model.addRow(new Object[]{ejem.getId(),  ejem.getTitulo(), 
+                        ejem.getNombreAutor(), ejem.getNombreEditorial(),  
+                        "--", ejem.getAutor().getNombrePais(),
+                        ejem.getDisponibilidad()});
+                }
+            }
+            this.vista.tabPrincipal.setModel(model);
+
+            this.vista.tabPrincipal.getColumnModel().getColumn(0).setPreferredWidth(40);
+            this.vista.tabPrincipal.getColumnModel().getColumn(0).setMinWidth(40);
+            this.vista.tabPrincipal.getColumnModel().getColumn(0).setMaxWidth(40);
+            this.vista.tabPrincipal.getColumnModel().getColumn(0).setWidth(40);
+
+        }catch(GlobalException | NoDataException ex){
+            JOptionPane.showMessageDialog(vista, "Error al cargar los autores: " + ex.getMessage());
+        }
+    }
+            
     //**************************************************************************
     
     public void solicitarLibro() throws GlobalException, NoDataException{

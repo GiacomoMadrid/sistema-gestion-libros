@@ -30,6 +30,11 @@ public class Ejemplar {
         this.id = id;
     }
     
+    public Ejemplar(String t){
+        this.titulo = t;
+    }
+    
+    
     public Ejemplar(Autor a, Editorial e, String t,  int d, Integer an){
         this.titulo = t;
         this.autor = a;
