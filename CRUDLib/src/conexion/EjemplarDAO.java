@@ -594,12 +594,13 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
         
         ResultSet rs = null;
         ArrayList lista = new ArrayList();
-        Ejemplar ejm = null;
+        Ejemplar ejm = (Ejemplar) obj;
         CallableStatement pstmt =null; 
         
         try{
             pstmt = conexion.prepareCall(BUSCAR_POR_TITULO);
             pstmt.registerOutParameter(1, OracleTypes.CURSOR);
+            pstmt.setString(2, ejm.getTitulo());
             pstmt.execute();
             
             rs = (ResultSet)pstmt.getObject(1);

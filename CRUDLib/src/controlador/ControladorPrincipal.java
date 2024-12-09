@@ -153,11 +153,10 @@ public class ControladorPrincipal {
             @Override
             public void actionPerformed(ActionEvent e){
                 String str = vista.txtBusqueda.getText();
-                int id = Integer.parseInt(str);
-                
+                                
                 if(vista.radAutor.isSelected()){
                     try {
-                        buscarPorAutor(id);
+                        buscarPorAutor(Integer.parseInt(str));
                     } catch (GlobalException ex) {
                         Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (NoDataException ex) {
@@ -166,7 +165,7 @@ public class ControladorPrincipal {
                     
                 }else if(vista.radDisponible.isSelected()){
                     try {
-                        buscarPorDisponibiliad(id);
+                        buscarPorDisponibiliad(Integer.parseInt(str));
                     } catch (GlobalException ex) {
                         Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (NoDataException ex) {
@@ -175,7 +174,7 @@ public class ControladorPrincipal {
                     
                 }else if(vista.radEditorial.isSelected()){
                     try {
-                        buscarPorEditorial(id);
+                        buscarPorEditorial(Integer.parseInt(str));
                     } catch (GlobalException ex) {
                         Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (NoDataException ex) {
@@ -193,7 +192,7 @@ public class ControladorPrincipal {
                     
                 }else if(vista.radPais.isSelected()){
                     try {
-                        buscarPorPais(id);
+                        buscarPorPais(Integer.parseInt(str));
                     } catch (GlobalException ex) {
                         Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (NoDataException ex) {
@@ -493,7 +492,7 @@ public class ControladorPrincipal {
         }    
     }
     
-    public void cargarAtuoresACombobox(){
+    public void cargarAutoresACombobox(){
         try{
             Collection<Autor> autores = aDao.mostrar_todo();
             for(Autor p : autores){
@@ -521,6 +520,8 @@ public class ControladorPrincipal {
         }else{
             cargarEjemplar();
         }
+        cargarEditorialesACombobox();
+        cargarAutoresACombobox();
     }
     
     public void limpiarComponentesCRUD(){
@@ -548,7 +549,7 @@ public class ControladorPrincipal {
         this.vista.setLocationRelativeTo(null);
         this.vista.setVisible(true);
         mostrarTodo();
-        cargarAtuoresACombobox();
+        cargarAutoresACombobox();
         cargarEditorialesACombobox();
     }
     
