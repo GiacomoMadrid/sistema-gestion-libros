@@ -31,7 +31,7 @@ public class frmReporte extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtReporte = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         panBase.setBackground(new java.awt.Color(255, 255, 255));
 

@@ -32,7 +32,7 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
     private static final String BUSCAR_POR_AUTOR ="{? = call buscar_por_autor(?)}";
     private static final String BUSCAR_POR_PAIS ="{? = call buscar_por_pais(?)}";
     private static final String BUSCAR_DISPONIBLES ="{? = call buscar_por_disponibilidad()}";
-    private static final String MOSTRAR_DATA = "{call mostrar_data(?, ?, ?, ?, ?, ?, ?)}";
+    private static final String MOSTRAR_DATA = "{call mostrar_data(?,?,?,?,?,?,?,?,?,?,?)}";
     private static final String OBTENER_LINEA = "BEGIN DBMS_OUTPUT.GET_LINE(?, ?); END;";
     
     private PaisDAO pDao = new PaisDAO();
@@ -725,58 +725,67 @@ public class EjemplarDAO extends Conexion implements I_Conexiones{
     }
     
     
-    public void mostrar_data(int ejemplarId, JTextArea textArea) throws GlobalException, NoDataException{
+    public void mostrar_data(int ejemplarId, JTextArea textArea) throws GlobalException, NoDataException {
+    try {
+        conectar();
+    } catch (ClassNotFoundException ex) {
+        throw new GlobalException("No se ha localizado el driver");
+    } catch (SQLException exe) {
+        throw new NoDataException("La base de datos no se encuentra disponible");
+    }
+    
+    CallableStatement procedimientoStmt = null;
+    try {
+        procedimientoStmt = conexion.prepareCall(MOSTRAR_DATA);
+        procedimientoStmt.setInt(1, ejemplarId);  
+        
+        procedimientoStmt.registerOutParameter(2, OracleTypes.INTEGER);   // lib_autor
+        procedimientoStmt.registerOutParameter(3, OracleTypes.INTEGER);   // lib_editorial
+        procedimientoStmt.registerOutParameter(4, OracleTypes.VARCHAR);   // lib_titulo
+        procedimientoStmt.registerOutParameter(5, OracleTypes.INTEGER);   // lib_dis
+        procedimientoStmt.registerOutParameter(6, OracleTypes.INTEGER);   // lib_anno
+        procedimientoStmt.registerOutParameter(7, OracleTypes.INTEGER);   // pais_id
+        procedimientoStmt.registerOutParameter(8, OracleTypes.VARCHAR);   // autor_nombres
+        procedimientoStmt.registerOutParameter(9, OracleTypes.VARCHAR);   // autor_apellidos
+        procedimientoStmt.registerOutParameter(10, OracleTypes.VARCHAR);  // ed_nombre
+        procedimientoStmt.registerOutParameter(11, OracleTypes.VARCHAR);  // pais_nombre
+
+        procedimientoStmt.execute();
+
+        String titulo = procedimientoStmt.getString(4);
+        int disponible = procedimientoStmt.getInt(5);
+        int annoPublicacion = procedimientoStmt.getInt(6);
+        String autorNombres = procedimientoStmt.getString(8);
+        String autorApellidos = procedimientoStmt.getString(9);
+        String editorialNombre = procedimientoStmt.getString(10);
+        String paisNombre = procedimientoStmt.getString(11);
+
+        StringBuilder reporteTexto = new StringBuilder();
+        reporteTexto.append("*************************************************************************\n");
+        reporteTexto.append("Detalles del Ejemplar\n");
+        reporteTexto.append("ID: ").append(ejemplarId).append("\n");
+        reporteTexto.append("Título: ").append(titulo).append("\n");
+        reporteTexto.append("Autor: ").append(autorNombres).append(" ").append(autorApellidos).append("\n");
+        reporteTexto.append("Editorial: ").append(editorialNombre).append("\n");
+        reporteTexto.append("Año de Publicación: ").append(annoPublicacion).append("\n");
+        reporteTexto.append("Disponible: ").append(disponible == 1 ? "Sí" : "No").append("\n");
+        reporteTexto.append("País: ").append(paisNombre).append("\n");
+        reporteTexto.append("\n");
+                
+        textArea.append(reporteTexto.toString());
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        textArea.setText("Error al ejecutar el procedimiento: " + e.getMessage());
+    } finally {
         try {
-            conectar();
-        } catch (ClassNotFoundException ex) {
-            throw new GlobalException("No se ha localizado el driver");
-        } catch (SQLException exe) {
-            throw new NoDataException("La base de datos no se encuentra disponible");
-        }
-
-        CallableStatement procedimientoStmt = null;
-
-        try {
-            procedimientoStmt = conexion.prepareCall(MOSTRAR_DATA);
-
-            procedimientoStmt.setInt(1, ejemplarId);
-
-             procedimientoStmt.registerOutParameter(2, OracleTypes.STRUCT, "EJEMPLAR");  // lib_rec
-            procedimientoStmt.registerOutParameter(3, OracleTypes.VARCHAR);  // pais_id
-            procedimientoStmt.registerOutParameter(4, OracleTypes.VARCHAR);  // autor_nombres
-            procedimientoStmt.registerOutParameter(5, OracleTypes.VARCHAR);  // autor_apellidos
-            procedimientoStmt.registerOutParameter(6, OracleTypes.VARCHAR);  // ed_nombre
-            procedimientoStmt.registerOutParameter(7, OracleTypes.VARCHAR);  // pais_nombre
-
-            procedimientoStmt.execute();
-
-            String autorNombres = procedimientoStmt.getString(4);
-            String autorApellidos = procedimientoStmt.getString(5);
-            String editorialNombre = procedimientoStmt.getString(6);
-            String paisNombre = procedimientoStmt.getString(7);
-
-            StringBuilder reporteTexto = new StringBuilder();
-            reporteTexto.append("*************************************************************************\n");
-            reporteTexto.append("Detalles del Ejemplar\n");
-            reporteTexto.append("Autor: ").append(autorNombres).append(" ").append(autorApellidos).append("\n");
-            reporteTexto.append("Editorial: ").append(editorialNombre).append("\n");
-            reporteTexto.append("País: ").append(paisNombre).append("\n");
-            reporteTexto.append("*************************************************************************\n");
-
-            textArea.append(reporteTexto.toString());
-
+            if (procedimientoStmt != null) procedimientoStmt.close();
+            if (conexion != null) conexion.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            textArea.setText("Error al ejecutar el procedimiento: " + e.getMessage());
-        } finally {
-            try {
-                if (procedimientoStmt != null) procedimientoStmt.close();
-                if (conexion != null) conexion.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
+}
     
     
 }
